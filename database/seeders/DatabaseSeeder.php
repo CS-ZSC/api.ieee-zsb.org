@@ -17,11 +17,14 @@ class DatabaseSeeder extends Seeder
     {
         // Run seeders in order
         $this->call([
-            ChapterSeeder::class,    // 1. Chapters must be created first
-            TrackSeeder::class,      // 2. Then tracks (depends on chapters)
-            CommitteeSeeder::class,  // 3. Then committees (independent)
-            UserSeeder::class,       // 4. Finally, create users (depends on all above)
+            PermissionSeeder::class,  // 1. Permissions must be created first
+            RoleSeeder::class,        // 2. Then roles (depends on permissions)
+            ChapterSeeder::class,     // 3. Chapters must be created before tracks
+            TrackSeeder::class,       // 4. Then tracks (depends on chapters)
+            CommitteeSeeder::class,   // 5. Then committees (independent)
+            UserSeeder::class,        // 6. Create users (depends on all above)
+            UserRoleSeeder::class,    // 7. Assign roles to users (depends on all above)
         ]);
-        
+
     }
 }

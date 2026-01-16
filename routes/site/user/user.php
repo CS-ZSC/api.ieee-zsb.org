@@ -6,8 +6,8 @@ use Illuminate\Support\Facades\Route;
 // All routes are protected by auth:sanctum middleware
 Route::middleware('auth:sanctum')->group(function () {
     // Get authenticated user's profile
-    Route::get('/profile', [UserController::class, 'profile']);
+    Route::get('/myprofile', [UserController::class, 'profile']);
 
     // Update user's profile
-    Route::put('/update', [UserController::class, 'update']);
+    Route::put('/updatemyprofile', [UserController::class, 'updateProfile']);
 });

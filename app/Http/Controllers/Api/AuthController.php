@@ -36,6 +36,8 @@ class AuthController extends Controller
         $data['position'] = 'user'; // كل اللي بيسجل هنا users عاديين
         $user = User::create($data);
 
+        $user->assignDefaultRole();
+
         // Create token
         $token = $user->createToken('site-token')->plainTextToken;
 
