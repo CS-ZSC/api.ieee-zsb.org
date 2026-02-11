@@ -19,7 +19,8 @@ return new class extends Migration
             $table->string('password');
             $table->unsignedBigInteger('groupable_id')->nullable();
             $table->string('groupable_type')->nullable();
-            $table->string('position')->nullable();
+            $table->string('national_id')->nullable();
+            $table->string('phone_number')->nullable();
             $table->string('avatar_src')->nullable();
             $table->string('linkedin')->nullable();
             $table->rememberToken();

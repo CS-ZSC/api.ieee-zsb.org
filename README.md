@@ -57,3 +57,63 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+
+## How to Run This Project
+
+### Prerequisites
+- PHP >= 8.1
+- Composer
+- MySQL or PostgreSQL database
+
+### Installation Steps
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/CS-ZSC/Back_end.git
+   cd Back_end
+   ```
+
+2. **Install dependencies**
+   ```bash
+   composer install
+   ```
+
+3. **Environment setup**
+   ```bash
+   cp .env.example .env
+   php artisan key:generate
+   ```
+
+4. **Configure database**
+   - Edit `.env` file with your database credentials
+   - Create the database in your MySQL/PostgreSQL server
+
+5. **Run database migrations**
+   ```bash
+   php artisan migrate
+   ```
+
+6. **Seed the database (optional)**
+   ```bash
+   php artisan db:seed
+   ```
+
+
+
+7. **Start the development server**
+   ```bash
+   php artisan serve
+   ```
+
+   The application will be available at `http://localhost:8000`
+
+### API Endpoints
+- Backend API: `http://localhost:8000/api/dashboard`
+- Site API: `http://localhost:8000/api/site`
+- EventsGate API: `http://localhost:8000/api/eventsgate`
+
+### Additional Commands
+- **Run tests**: `php artisan test`
+- **Clear cache**: `php artisan cache:clear`
+- **View routes**: `php artisan route:list` 

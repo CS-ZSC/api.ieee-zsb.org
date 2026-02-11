@@ -199,9 +199,10 @@ class User extends Authenticatable
             ->exists();
     }
 
-    // In app/Models/User.php
-
-    // In app/Models/User.php
+    public function positions()
+    {
+        return $this->hasMany(Position::class);
+    }
 
     public function assignDefaultRole()
     {
