@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('phone_number')->nullable();
             $table->string('avatar_src')->nullable();
             $table->string('linkedin')->nullable();
+            $table->string('join_code')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });
