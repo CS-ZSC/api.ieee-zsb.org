@@ -30,9 +30,8 @@ class AuthController extends Controller
             ], 422);
         }
 
-        // Create user
+        // Create user — password is auto-hashed by the 'hashed' cast on the model
         $data = $validator->validated();
-        $data['password'] = Hash::make($data['password']);
         $data['position'] = 'user'; // كل اللي بيسجل هنا users عاديين
         $user = User::create($data);
 
@@ -42,9 +41,10 @@ class AuthController extends Controller
         $token = $user->createToken('site-token')->plainTextToken;
 
         return response()->json([
-            'message' => 'User registered successfully',
-            'data'    => $user,
-            'token'   => $token,
+            'message'    => 'User registered successfully',
+            'data'       => $user,
+            'token'      => $token,
+            'token_type' => 'Bearer',
         ], 201);
     }
 
@@ -79,9 +79,10 @@ class AuthController extends Controller
         $token = $user->createToken('site-token')->plainTextToken;
 
         return response()->json([
-            'message' => 'Login successful',
-            'data'    => $user,
-            'token'   => $token,
+            'message'    => 'Login successful',
+            'data'       => $user,
+            'token'      => $token,
+            'token_type' => 'Bearer',
         ]);
     }
 
@@ -141,9 +142,11 @@ class AuthController extends Controller
      */
     public function adminLogout(Request $request)
     {
-        $request->user()->currentAccessToken()->delete();
-
         $user = $request->user();
+
+        // Delete current token after capturing user reference
+        $user->currentAccessToken()->delete();
+
         return response()->json([
             'message' => ucfirst($user->position) . ' logged out successfully'
         ]);

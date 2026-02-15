@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->string('position')->default('user');
             $table->unsignedBigInteger('groupable_id')->nullable();
             $table->string('groupable_type')->nullable();
             $table->string('national_id')->nullable();
