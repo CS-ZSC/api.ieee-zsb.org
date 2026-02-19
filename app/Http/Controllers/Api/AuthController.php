@@ -37,11 +37,14 @@ class AuthController extends Controller
 
         $user->assignDefaultRole();
 
+        // Send email verification notification
+        $user->sendEmailVerificationNotification();
+
         // Create token
         $token = $user->createToken('site-token')->plainTextToken;
 
         return response()->json([
-            'message'    => 'User registered successfully',
+            'message'    => 'User registered successfully. Please verify your email.',
             'data'       => $user,
             'token'      => $token,
             'token_type' => 'Bearer',
