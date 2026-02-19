@@ -29,6 +29,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'position',
         'avatar_src',
         'linkedin',
+        'phone_number',
+        'national_id',
         'email_verified_at',
         'remember_token',
         'groupable_id',

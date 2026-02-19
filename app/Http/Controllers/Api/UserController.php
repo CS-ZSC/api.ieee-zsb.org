@@ -52,14 +52,23 @@ class UserController extends Controller
     {
         $user = $request->user();
 
-        $data = $request->validate([
-            'name'       => 'sometimes|string|max:255',
-            'email'      => 'sometimes|email|unique:users,email,' . $user->id,
-            'avatar_src' => 'sometimes|nullable|string',
-            'linkedin'   => 'sometimes|nullable|string',
+        $validator = Validator::make($request->all(), [
+            'name'         => 'sometimes|string|max:255',
+            'email'        => 'sometimes|email|unique:users,email,' . $user->id,
+            'phone_number' => 'sometimes|nullable|string|max:20|unique:users,phone_number,' . $user->id,
+            'national_id'  => 'sometimes|nullable|string|max:50|unique:users,national_id,' . $user->id,
+            'avatar_src'   => 'sometimes|nullable|string',
+            'linkedin'     => 'sometimes|nullable|string',
         ]);
 
-        $user->update($data);
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Validation failed',
+                'errors'  => $validator->errors(),
+            ], 422);
+        }
+
+        $user->update($validator->validated());
 
         return response()->json([
             'message' => 'Profile updated successfully',
