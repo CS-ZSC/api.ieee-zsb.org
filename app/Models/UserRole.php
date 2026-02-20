@@ -40,6 +40,7 @@ class UserRole extends Pivot
         'role_id',
         'scopeable_type',
         'scopeable_id',
+        'is_manual',
     ];
 
     /**
@@ -50,6 +51,7 @@ class UserRole extends Pivot
     protected $casts = [
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
+        'is_manual' => 'boolean',
     ];
 
     /**

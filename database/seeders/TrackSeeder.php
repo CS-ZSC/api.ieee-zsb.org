@@ -17,45 +17,26 @@ class TrackSeeder extends Seeder
 
         $tracks = [
             // Computer Society Tracks
-            [
-                'name' => 'Artificial Intelligence',
-                'hashtag' => '#AITrack',
-                'image' => 'tracks/ai-track.jpg',
-                'description' => 'Explore the world of AI and machine learning',
-                'chapter_id' => $csChapter->id,
-            ],
-            [
-                'name' => 'Web Development',
-                'hashtag' => '#WebDev',
-                'image' => 'tracks/web-dev.jpg',
-                'description' => 'Master full-stack web development',
-                'chapter_id' => $csChapter->id,
-            ],
+            ['name' => 'Frontend', 'chapter_id' => $csChapter->id],
+            ['name' => 'Backend', 'chapter_id' => $csChapter->id],
+            ['name' => 'Artificial Intelligence', 'chapter_id' => $csChapter->id],
+            ['name' => 'Cyber Security', 'chapter_id' => $csChapter->id],
+            ['name' => 'Data Science', 'chapter_id' => $csChapter->id],
+            ['name' => 'Mobile', 'chapter_id' => $csChapter->id],
 
             // PES Tracks
-            [
-                'name' => 'Renewable Energy',
-                'hashtag' => '#RenewableEnergy',
-                'image' => 'tracks/renewable-energy.jpg',
-                'description' => 'Sustainable and renewable energy solutions',
-                'chapter_id' => $pesChapter->id,
-            ],
+            ['name' => 'Basic Automation', 'chapter_id' => $pesChapter->id],
+            ['name' => 'Advanced Automation', 'chapter_id' => $pesChapter->id],
+            ['name' => 'Smart Home', 'chapter_id' => $pesChapter->id],
+            ['name' => 'E-Mobility', 'chapter_id' => $pesChapter->id],
+            ['name' => 'Distribution', 'chapter_id' => $pesChapter->id],
 
             // RAS Tracks
-            [
-                'name' => 'Robotics',
-                'hashtag' => '#Robotics',
-                'image' => 'tracks/robotics.jpg',
-                'description' => 'Design and program autonomous robots',
-                'chapter_id' => $rasChapter->id,
-            ],
-            [
-                'name' => 'Automation',
-                'hashtag' => '#Automation',
-                'image' => 'tracks/automation.jpg',
-                'description' => 'Industrial automation and control systems',
-                'chapter_id' => $rasChapter->id,
-            ],
+            ['name' => 'Mechanical Design', 'chapter_id' => $rasChapter->id],
+            ['name' => 'PCB Design', 'chapter_id' => $rasChapter->id],
+            ['name' => 'Embedded Systems', 'chapter_id' => $rasChapter->id],
+            ['name' => 'ROS', 'chapter_id' => $rasChapter->id],
+            ['name' => 'IC Design', 'chapter_id' => $rasChapter->id],
         ];
 
         foreach ($tracks as $track) {

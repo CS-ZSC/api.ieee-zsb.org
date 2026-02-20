@@ -38,6 +38,13 @@ class ChapterSeeder extends Seeder
                 'color_scheme_1' => '#E31937',
                 'color_scheme_2' => '#FFFFFF',
             ],
+            [
+                'name' => 'Women in Engineering',
+                'short_name' => 'WIE',
+                'logo' => 'chapters/wie-logo.png',
+                'color_scheme_1' => '#E31937',
+                'color_scheme_2' => '#FFFFFF',
+            ]
         ];
 
         foreach ($chapters as $chapter) {

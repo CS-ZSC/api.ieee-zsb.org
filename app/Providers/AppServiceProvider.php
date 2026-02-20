@@ -8,6 +8,9 @@ use App\Models\Chapter;
 use App\Models\Committee;
 use App\Models\Track;
 use App\Models\User;
+use App\Models\Goal;
+use App\Models\Activity;
+use App\Models\News;
 use App\Policies\ChapterPolicy;
 use App\Policies\CommitteePolicy;
 use App\Policies\TrackPolicy;
@@ -34,6 +37,10 @@ class AppServiceProvider extends ServiceProvider
             'user'      => User::class,
             'chapter'   => Chapter::class,
             'committee' => Committee::class,
+            'track'     => Track::class,
+            'goal'      => Goal::class,
+            'activity'  => Activity::class,
+            'news'      => News::class,
         ]);
     }
 

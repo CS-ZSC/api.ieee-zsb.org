@@ -34,6 +34,13 @@ class PermissionSeeder extends Seeder
             'edit tracks',
             'delete tracks',
 
+            // News
+            'manage news',
+
+            // Management
+            'manage positions',
+            'manage roles',
+            'manage permissions',
 
         ];
 

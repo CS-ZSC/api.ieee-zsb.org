@@ -16,9 +16,9 @@ class UserPolicy
     }
 
     public function viewAny(User $user)
-{
-    return $user->hasPermission('view users');
-}
+    {
+        return $user->hasPermission('view users');
+    }
 
 
     public function view(User $user, User $model)

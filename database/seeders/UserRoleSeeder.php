@@ -3,77 +3,95 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use App\Models\Chapter;
 use App\Models\Role;
-use App\Models\UserRole;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 
 class UserRoleSeeder extends Seeder
 {
-// In database/seeders/UserRoleSeeder.php
+    public function run(): void
+    {
+        $roles = Role::all()->keyBy('name');
 
-public function run(): void
-{
-    // Get all roles once
-    $roles = Role::all()->keyBy('name');
+        $users = User::with(['groupable', 'track', 'positions'])->get();
 
-    // Get all users with their relationships
-    $users = User::with(['groupable', 'track'])->get();
+        // Position → role mapping (lowercase position name → [role name, scope source])
+        // scope source: 'groupable' = user's chapter/committee, 'track' = user's track, null = global
+        $positionRoleMap = [
+            'chairperson'                  => ['chapter chairperson', 'groupable'],
+            'vice chairperson'             => ['vice chapter chairperson', 'groupable'],
+            'technical vice chairperson'   => ['vice chapter chairperson', 'groupable'],
+            'managerial vice chairperson'  => ['vice chapter chairperson', 'groupable'],
+            'webmaster'                    => ['member', 'groupable'],
+            'secretary'                    => ['member', 'groupable'],
+            'treasurer'                    => ['member', 'groupable'],
+            'lead'                         => null, // resolved dynamically based on groupable_type
+            'vice lead'                    => null, // resolved dynamically based on groupable_type
+            'track lead'                   => ['track leader', 'track'],
+            'track vice-lead'              => ['vice track leader', 'track'],
+        ];
 
-    // Position to role mapping (all lowercase)
-    $positionRoleMap = [
-        'chairperson' => 'chapter chairperson',
-        'vice chairperson' => 'vice chapter chairperson',
-        'committee leader' => 'committee leader',
-        'vice committee leader' => 'vice committee leader',
-        'track leader' => 'track leader',
-        'vice track leader' => 'vice track leader',
-        'member' => 'member',
-        'user' => 'member',
-        'dev' => 'ieee admin'
-    ];
+        foreach ($users as $user) {
+            // IEEE chapter members → ieee admin (global)
+            if (
+                $user->groupable_type === 'chapter' &&
+                $user->groupable &&
+                $user->groupable->short_name === 'IEEE'
+            ) {
+                if (isset($roles['ieee admin'])) {
+                    $user->roles()->syncWithoutDetaching([
+                        $roles['ieee admin']->id => [
+                            'scopeable_type' => null,
+                            'scopeable_id' => null,
+                        ],
+                    ]);
+                }
+                continue;
+            }
 
-    foreach ($users as $user) {
-        $position = strtolower($user->position);
+            $positionNames = $user->positions->pluck('name')->map(fn ($n) => strtolower($n));
 
-        // Get role name from map, default to 'member'
-        $roleName = $positionRoleMap[$position] ?? 'member';
+            foreach ($positionNames as $position) {
+                $roleName = null;
+                $scope = null;
 
-        // Skip if role doesn't exist
-        if (!isset($roles[$roleName])) {
-            continue;
+                if ($position === 'lead') {
+                    // Lead in committee → committee leader, Lead in chapter (WIE) → chapter chairperson
+                    if ($user->groupable_type === 'committee') {
+                        $roleName = 'committee leader';
+                    } else {
+                        $roleName = 'chapter chairperson';
+                    }
+                    $scope = $user->groupable;
+                } elseif ($position === 'vice lead') {
+                    if ($user->groupable_type === 'committee') {
+                        $roleName = 'vice committee leader';
+                    } else {
+                        $roleName = 'vice chapter chairperson';
+                    }
+                    $scope = $user->groupable;
+                } elseif (isset($positionRoleMap[$position])) {
+                    [$roleName, $scopeSource] = $positionRoleMap[$position];
+                    $scope = match ($scopeSource) {
+                        'groupable' => $user->groupable,
+                        'track' => $user->track,
+                        default => null,
+                    };
+                } else {
+                    $roleName = 'member';
+                    $scope = $user->groupable;
+                }
+
+                if (!$roleName || !isset($roles[$roleName])) {
+                    continue;
+                }
+
+                $user->roles()->syncWithoutDetaching([
+                    $roles[$roleName]->id => [
+                        'scopeable_type' => $scope?->getMorphClass(),
+                        'scopeable_id' => $scope?->id,
+                    ],
+                ]);
+            }
         }
-
-        $role = $roles[$roleName];
-
-        // Determine the scope
-        $scope = null;
-
-        // For IEEE admins (dev or in IEEE chapter)
-        if ($roleName === 'ieee admin' ||
-            ($user->groupable_type === 'App\\Models\\Chapter' &&
-             $user->groupable &&
-             $user->groupable->short_name === 'IEEE')) {
-            $scope = null; // Global scope
-        }
-        // For track-related roles
-        elseif (in_array($roleName, ['track leader', 'vice track leader'])) {
-            $scope = $user->track;
-        }
-        // For all other roles
-        else {
-            $scope = $user->groupable;
-        }
-
-        // Remove any existing roles
-        $user->roles()->detach();
-
-        // Assign the role with scope
-        $user->roles()->attach($role->id, [
-            'scopeable_type' => $scope ? get_class($scope) : null,
-            'scopeable_id' => $scope ? $scope->id : null
-        ]);
     }
-}
 }

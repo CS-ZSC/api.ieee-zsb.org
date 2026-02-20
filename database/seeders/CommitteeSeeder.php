@@ -11,28 +11,40 @@ class CommitteeSeeder extends Seeder
     {
         $committees = [
             [
-                'name' => 'Technical Committee',
-                'hashtag' => '#TechTeam',
-                'description' => 'Responsible for technical workshops and sessions',
-                'image' => 'committees/tech-committee.jpg',
+                'name' => 'Ambassadors',
+                'hashtag' => '#Ambassadors',
+                'description' => null,
+                'image' => null,
             ],
             [
-                'name' => 'Public Relations',
-                'hashtag' => '#PRTeam',
-                'description' => 'Handles social media and public communications',
-                'image' => 'committees/pr-committee.jpg',
+                'name' => 'Business Development',
+                'hashtag' => '#BizDev',
+                'description' => null,
+                'image' => null,
             ],
             [
-                'name' => 'Human Resources',
-                'hashtag' => '#HRTeam',
-                'description' => 'Manages member relations and internal affairs',
-                'image' => 'committees/hr-committee.jpg',
+                'name' => 'Multimedia',
+                'hashtag' => '#Multimedia',
+                'description' => null,
+                'image' => null,
             ],
             [
-                'name' => 'Logistics',
-                'hashtag' => '#LogisticsTeam',
-                'description' => 'Handles event planning and logistics',
-                'image' => 'committees/logistics-committee.jpg',
+                'name' => 'Operations',
+                'hashtag' => '#Operations',
+                'description' => null,
+                'image' => null,
+            ],
+            [
+                'name' => 'Talent & Tech',
+                'hashtag' => '#TalentAndTech',
+                'description' => null,
+                'image' => null,
+            ],
+            [
+                'name' => 'Marketing',
+                'hashtag' => '#Marketing',
+                'description' => null,
+                'image' => null,
             ],
         ];
 

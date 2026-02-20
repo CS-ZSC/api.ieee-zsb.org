@@ -3,36 +3,99 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Season;
 use App\Models\Summary;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class SummaryController extends Controller
 {
     public function index()
     {
-        return response()->json(Summary::all());
+        $summaries = Summary::with('season.chapter')->get();
+
+        if ($summaries->isEmpty()) {
+            return response()->json([
+                'message' => 'No summaries found',
+                'data' => []
+            ], 200);
+        }
+
+        return response()->json($summaries);
     }
 
     public function store(Request $request)
     {
-        return response()->json(Summary::create($request->all()), 201);
+        $validator = Validator::make($request->all(), [
+            'summary_text' => 'required|string',
+            'season_id' => 'required|exists:seasons,id',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Validation failed',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $season = Season::findOrFail($request->season_id);
+        $this->authorize('update', $season->chapter);
+
+        $summary = Summary::create($validator->validated());
+
+        return response()->json([
+            'message' => 'Summary created successfully',
+            'data' => $summary->load('season'),
+        ], 201);
     }
 
     public function show($id)
     {
-        return response()->json(Summary::findOrFail($id));
-    }
+        $summary = Summary::with('season.chapter')->find($id);
 
-    public function update(Request $request, $id)
-    {
-        $summary = Summary::findOrFail($id);
-        $summary->update($request->all());
+        if (!$summary) {
+            return response()->json([
+                'message' => 'Summary not found',
+                'data' => null
+            ], 404);
+        }
+
         return response()->json($summary);
     }
 
-    public function destroy($id)
+    public function update(Request $request, Summary $summary)
     {
-        Summary::findOrFail($id)->delete();
-        return response()->json(null, 204);
+        $this->authorize('update', $summary->season->chapter);
+
+        $validator = Validator::make($request->all(), [
+            'summary_text' => 'sometimes|required|string',
+            'season_id' => 'sometimes|required|exists:seasons,id',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Validation failed',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $summary->update($validator->validated());
+        $summary->refresh();
+
+        return response()->json([
+            'message' => 'Summary updated successfully',
+            'data' => $summary->load('season'),
+        ]);
+    }
+
+    public function destroy(Summary $summary)
+    {
+        $this->authorize('update', $summary->season->chapter);
+
+        $summary->delete();
+
+        return response()->json([
+            'message' => 'Summary deleted successfully',
+        ], 200);
     }
 }

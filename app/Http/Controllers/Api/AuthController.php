@@ -32,10 +32,9 @@ class AuthController extends Controller
 
         // Create user
         $data = $validator->validated();
-        $data['password'] = Hash::make($data['password']);
-        $data['position'] = 'user'; // كل اللي بيسجل هنا users عاديين
         $user = User::create($data);
 
+        // Assign default member role
         $user->assignDefaultRole();
 
         // Create token
@@ -118,10 +117,15 @@ class AuthController extends Controller
             ]);
         }
 
-        // Check if user is not a regular user
-        if ($user->position === 'user') {
+        // Only allow users who have a role with at least one permission
+        $hasAdminRole = $user->roles()
+            ->where('name', '!=', 'member')
+            ->whereHas('permissions')
+            ->exists();
+
+        if (!$hasAdminRole) {
             return response()->json([
-                'message' => 'Access denied. This area is restricted to non-user accounts.'
+                'message' => 'Access denied. This area is restricted to board members.'
             ], 403);
         }
 
@@ -129,10 +133,10 @@ class AuthController extends Controller
         $token = $user->createToken('admin-token', ['admin'])->plainTextToken;
 
         return response()->json([
-            'message' => ucfirst($user->position) . ' login successful',
-            'user' => $user,
+            'message' => 'Login successful',
+            'data'  => $user->load(['positions', 'roles']),
             'token' => $token,
-            'token_type' => 'Bearer'
+            'token_type' => 'Bearer',
         ]);
     }
 
@@ -143,9 +147,8 @@ class AuthController extends Controller
     {
         $request->user()->currentAccessToken()->delete();
 
-        $user = $request->user();
         return response()->json([
-            'message' => ucfirst($user->position) . ' logged out successfully'
+            'message' => 'Logged out successfully'
         ]);
     }
 }

@@ -24,6 +24,11 @@ class Track extends Model
         return $this->morphMany(Goal::class, 'goalable');
     }
 
+    public function activities()
+    {
+        return $this->morphMany(Activity::class, 'activityable');
+    }
+
     public function users()
     {
         return $this->hasMany(User::class, 'track_id');

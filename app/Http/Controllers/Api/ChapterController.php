@@ -13,7 +13,7 @@ class ChapterController extends Controller
     public function index()
     {
 
-        $chapters = Chapter::all();
+        $chapters = Chapter::with(['tracks.goals', 'tracks.activities', 'tracks.users.positions', 'descriptions', 'seasons', 'users' => fn ($q) => $q->whereNull('track_id')->with('positions')])->get();
 
         if ($chapters->isEmpty()) {
             return response()->json([
@@ -27,6 +27,8 @@ class ChapterController extends Controller
 
     public function store(Request $request)
     {
+        $this->authorize('create', Chapter::class);
+
         $validator = Validator::make($request->all(), [
             'name'           => 'required|string|max:255|unique:chapters,name',
             'short_name'     => 'required|string|max:50|unique:chapters,short_name',
@@ -53,7 +55,7 @@ class ChapterController extends Controller
     public function show($id)
     {
 
-        $chapter = Chapter::find($id);
+        $chapter = Chapter::with(['tracks.goals', 'tracks.activities', 'tracks.users.positions', 'descriptions', 'seasons', 'users' => fn ($q) => $q->whereNull('track_id')->with('positions')])->find($id);
 
         if (!$chapter) {
             return response()->json([
@@ -66,47 +68,51 @@ class ChapterController extends Controller
     }
 
 
-public function update(Request $request, Chapter $chapter)
-{
-    $validator = Validator::make($request->all(), [
-        'name' => [
-            'sometimes',
-            'required',
-            'string',
-            'max:255',
-            Rule::unique('chapters', 'name')->ignore($chapter->id),
-        ],
-        'short_name' => [
-            'sometimes',
-            'required',
-            'string',
-            'max:50',
-            Rule::unique('chapters', 'short_name')->ignore($chapter->id),
-        ],
-        'logo'           => 'nullable|string',
-        'color_scheme_1' => 'nullable|string|max:20',
-        'color_scheme_2' => 'nullable|string|max:20',
-    ]);
+    public function update(Request $request, Chapter $chapter)
+    {
+        $this->authorize('update', $chapter);
 
-    if ($validator->fails()) {
+        $validator = Validator::make($request->all(), [
+            'name' => [
+                'sometimes',
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('chapters', 'name')->ignore($chapter->id),
+            ],
+            'short_name' => [
+                'sometimes',
+                'required',
+                'string',
+                'max:50',
+                Rule::unique('chapters', 'short_name')->ignore($chapter->id),
+            ],
+            'logo'           => 'nullable|string',
+            'color_scheme_1' => 'nullable|string|max:20',
+            'color_scheme_2' => 'nullable|string|max:20',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Validation failed',
+                'errors'  => $validator->errors(),
+            ], 422);
+        }
+
+        $chapter->update($validator->validated());
+        $chapter->refresh();
+
         return response()->json([
-            'message' => 'Validation failed',
-            'errors'  => $validator->errors(),
-        ], 422);
+            'message' => 'Chapter updated successfully',
+            'data'    => $chapter,
+        ]);
     }
-
-    $chapter->update($validator->validated());
-    $chapter->refresh();
-
-    return response()->json([
-        'message' => 'Chapter updated successfully',
-        'data'    => $chapter,
-    ]);
-}
 
 
     public function destroy(Chapter $chapter)
     {
+        $this->authorize('delete', $chapter);
+
         try {
             $chapter->delete();
 

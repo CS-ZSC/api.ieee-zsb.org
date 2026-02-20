@@ -22,4 +22,9 @@ class Committee extends Model
     {
         return $this->morphMany(Goal::class, 'goalable');
     }
+
+    public function activities()
+    {
+        return $this->morphMany(Activity::class, 'activityable');
+    }
 }

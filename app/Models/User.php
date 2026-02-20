@@ -6,7 +6,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -26,7 +25,6 @@ class User extends Authenticatable
         'email',
         'password',
         'track_id',
-        'position',
         'avatar_src',
         'linkedin',
         'email_verified_at',
@@ -83,7 +81,7 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Role::class, 'user_roles')
             ->using(UserRole::class)
-            ->withPivot(['scopeable_type', 'scopeable_id'])
+            ->withPivot(['scopeable_type', 'scopeable_id', 'is_manual'])
             ->withTimestamps();
     }
 
@@ -94,19 +92,20 @@ class User extends Authenticatable
      * @param  \Illuminate\Database\Eloquent\Model|null  $scope
      * @return \App\Models\UserRole
      */
-    public function assignRole($role, $scope = null)
+    public function assignRole($role, $scope = null, bool $manual = false)
     {
         $role = $role instanceof Role ? $role : Role::where('name', $role)->firstOrFail();
 
         $this->roles()->attach($role->id, [
-            'scopeable_type' => $scope ? get_class($scope) : null,
+            'scopeable_type' => $scope ? $scope->getMorphClass() : null,
             'scopeable_id' => $scope ? $scope->id : null,
+            'is_manual' => $manual,
         ]);
 
         // Return the UserRole instance
         return $this->roleAssignments()
             ->where('role_id', $role->id)
-            ->where('scopeable_type', $scope ? get_class($scope) : null)
+            ->where('scopeable_type', $scope ? $scope->getMorphClass() : null)
             ->where('scopeable_id', $scope ? $scope->id : null)
             ->first();
     }
@@ -125,7 +124,7 @@ class User extends Authenticatable
         return $this->roles()
             ->wherePivot('role_id', $role->id)
             ->when($scope, function ($query) use ($scope) {
-                return $query->wherePivot('scopeable_type', get_class($scope))
+                return $query->wherePivot('scopeable_type', $scope->getMorphClass())
                     ->wherePivot('scopeable_id', $scope->id);
             }, function ($query) {
                 return $query->whereNull('scopeable_type')
@@ -146,7 +145,7 @@ class User extends Authenticatable
         return $this->roles()
             ->where('name', $roleName)
             ->when($scope, function ($query) use ($scope) {
-                return $query->where('scopeable_type', get_class($scope))
+                return $query->where('scopeable_type', $scope->getMorphClass())
                     ->where('scopeable_id', $scope->id);
             }, function ($query) {
                 return $query->whereNull('scopeable_type')
@@ -167,7 +166,7 @@ class User extends Authenticatable
         return $this->roles()
             ->whereIn('name', $roles)
             ->when($scope, function ($query) use ($scope) {
-                return $query->where('scopeable_type', get_class($scope))
+                return $query->where('scopeable_type', $scope->getMorphClass())
                     ->where('scopeable_id', $scope->id);
             }, function ($query) {
                 return $query->whereNull('scopeable_type')
@@ -189,72 +188,127 @@ class User extends Authenticatable
             ->whereHas('permissions', function ($query) use ($permissionName) {
                 $query->where('name', $permissionName);
             })
-            ->when($scope, function ($query) use ($scope) {
-                return $query->where('scopeable_type', get_class($scope))
-                    ->where('scopeable_id', $scope->id);
-            }, function ($query) {
-                return $query->whereNull('scopeable_type')
-                    ->whereNull('scopeable_id');
+            ->where(function ($query) use ($scope) {
+                // Always check global roles (they grant permission everywhere)
+                $query->where(function ($q) {
+                    $q->whereNull('scopeable_type')->whereNull('scopeable_id');
+                });
+
+                // Also check scoped roles if a scope is provided
+                if ($scope) {
+                    $query->orWhere(function ($q) use ($scope) {
+                        $q->where('scopeable_type', $scope->getMorphClass())
+                            ->where('scopeable_id', $scope->id);
+                    });
+                }
             })
             ->exists();
     }
 
-    public function positions()
+    public function positions(): BelongsToMany
     {
-        return $this->hasMany(Position::class);
+        return $this->belongsToMany(Position::class);
     }
 
     public function assignDefaultRole()
     {
-        $role = null;
-        $scope = null;
+        // Remove only auto-assigned roles (preserve manual ones)
+        $this->roleAssignments()->where('is_manual', false)->delete();
 
+        // IEEE chapter members get ieee admin (global scope)
         if (
-            $this->groupable_type === 'App\\Models\\Chapter' &&
+            $this->groupable_type === 'chapter' &&
             $this->groupable &&
             $this->groupable->short_name === 'IEEE'
         ) {
-            // IEEE Admin - global scope
-            $role = 'ieee admin';
-            $scope = null;
-        } else {
-            // For all other roles
-            $position = strtolower($this->position);
-            switch ($position) {
-                case 'chapter chairperson':
-                case 'vice chapter chairperson':
-                case 'committee leader':
-                case 'vice committee leader':
-                    $role = $position;
-                    $scope = $this->groupable;
-                    break;
-                case 'track leader':
-                case 'vice track leader':
-                    $role = $position;
-                    $scope = $this->track;
-                    break;
-                default:
-                    $role = 'member';
-                    $scope = $this->groupable;
+            $roleModel = Role::where('name', 'ieee admin')->first();
+            if ($roleModel) {
+                $this->roles()->syncWithoutDetaching([
+                    $roleModel->id => [
+                        'scopeable_type' => null,
+                        'scopeable_id' => null,
+                        'is_manual' => false,
+                    ],
+                ]);
             }
+            return;
         }
 
-        // Remove any existing roles
-        $this->roles()->detach();
+        // Load positions with their linked roles
+        $positions = $this->positions()->with('role')->get();
 
-        // Find the role
-        $roleModel = Role::where('name', $role)->first();
-        if (!$roleModel) {
-            return; // Role not found
+        // No positions → assign member role (e.g. new registered users)
+        if ($positions->isEmpty()) {
+            $memberRole = Role::where('name', 'member')->first();
+            if ($memberRole) {
+                $this->roles()->syncWithoutDetaching([
+                    $memberRole->id => [
+                        'scopeable_type' => null,
+                        'scopeable_id' => null,
+                        'is_manual' => false,
+                    ],
+                ]);
+            }
+            return;
         }
 
-        // Prepare the pivot data
-        $pivotData = [
-            'scopeable_type' => $scope ? get_class($scope) : null,
-            'scopeable_id' => $scope ? $scope->id : null,
-        ];
+        foreach ($positions as $position) {
+            $roleModel = null;
+            $scope = null;
 
-        // Attach the role with scope
-        $this->roles()->attach($roleModel->id, $pivotData);
+            // If position has a linked role, use it directly
+            if ($position->role_id) {
+                $roleModel = $position->role;
+                // Determine scope based on role's scope_type
+                $scope = match ($roleModel->scope_type) {
+                    'chapter', 'committee' => $this->groupable,
+                    'track' => $this->track,
+                    default => null,
+                };
+            } else {
+                // Fallback to hardcoded mapping for seeded positions
+                $positionName = strtolower($position->name);
+
+                $roleName = match (true) {
+                    $positionName === 'chairperson' && $this->groupable_type === 'chapter'
+                        => 'chapter chairperson',
+                    in_array($positionName, ['vice chairperson', 'technical vice chairperson', 'managerial vice chairperson']) && $this->groupable_type === 'chapter'
+                        => 'vice chapter chairperson',
+                    $positionName === 'lead' && $this->groupable_type === 'committee'
+                        => 'committee leader',
+                    $positionName === 'lead' && $this->groupable_type === 'chapter'
+                        => 'chapter chairperson',
+                    $positionName === 'vice lead' && $this->groupable_type === 'committee'
+                        => 'vice committee leader',
+                    $positionName === 'vice lead' && $this->groupable_type === 'chapter'
+                        => 'vice chapter chairperson',
+                    $positionName === 'track lead'
+                        => 'track leader',
+                    $positionName === 'track vice-lead'
+                        => 'vice track leader',
+                    default => 'member',
+                };
+
+                $roleModel = Role::where('name', $roleName)->first();
+
+                $scope = match ($roleName) {
+                    'track leader', 'vice track leader' => $this->track,
+                    'member' => null,
+                    default => $this->groupable,
+                };
+            }
+
+            if (!$roleModel) {
+                continue;
+            }
+
+            $this->roles()->syncWithoutDetaching([
+                $roleModel->id => [
+                    'scopeable_type' => $scope?->getMorphClass(),
+                    'scopeable_id' => $scope?->id,
+                    'is_manual' => false,
+                ],
+            ]);
+        }
     }
 }
