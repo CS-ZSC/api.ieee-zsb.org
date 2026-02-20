@@ -48,8 +48,17 @@ class EventController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Event $event)
+    public function show($slug)
     {
+        $event = Event::where('slug', $slug)->first();
+
+        if (!$event) {
+            return response()->json([
+                'message' => 'Event not found',
+                'data' => null
+            ], 404);
+        }
+
         return response()->json([
             'message' => 'Event details',
             'data' => $event
@@ -59,8 +68,17 @@ class EventController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Event $event)
+    public function update(Request $request, $slug)
     {
+        $event = Event::where('slug', $slug)->first();
+
+        if (!$event) {
+            return response()->json([
+                'message' => 'Event not found',
+                'data' => null
+            ], 404);
+        }
+
         $validated = $request->validate([
             'name' => 'sometimes|required|string',
             'slug' => 'sometimes|required|string|unique:events,slug,' . $event->id,
@@ -85,8 +103,17 @@ class EventController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Event $event)
+    public function destroy($slug)
     {
+        $event = Event::where('slug', $slug)->first();
+
+        if (!$event) {
+            return response()->json([
+                'message' => 'Event not found',
+                'data' => null
+            ], 404);
+        }
+
         $event->delete();
 
         return response()->json([

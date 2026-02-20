@@ -19,11 +19,11 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->text('logo')->nullable();
             $table->text('cover_image')->nullable();
-            $table->timestampTz('start_date');
-            $table->timestampTz('end_date');
+            $table->timestamp('start_date');
+            $table->timestamp('end_date')->nullable();
             $table->text('location');
             $table->text('status');
-            $table->timestampsTz();
+            $table->timestamps();
         });
     }
 
