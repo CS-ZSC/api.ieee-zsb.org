@@ -74,6 +74,59 @@ class UserController extends Controller
         ]);
     }
 
+    /**
+     * Get EventsGate visitor profile
+     */
+    public function eventsGateProfile(Request $request)
+    {
+        $user = $request->user();
+
+        return response()->json([
+            'message' => 'EventsGate profile retrieved successfully',
+            'data' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'phone_number' => $user->phone_number,
+                'national_id' => $user->national_id,
+                'avatar_src' => $user->avatar_src,
+                'linkedin' => $user->linkedin,
+                'email_verified_at' => $user->email_verified_at,
+                'created_at' => $user->created_at,
+            ]
+        ]);
+    }
+
+    /**
+     * Update EventsGate visitor profile
+     */
+    public function eventsGateUpdateProfile(Request $request)
+    {
+        $user = $request->user();
+
+        $validator = Validator::make($request->all(), [
+            'name' => 'sometimes|string|max:255',
+            'phone_number' => ['sometimes', 'string', 'max:20', Rule::unique('users', 'phone_number')->ignore($user->id)],
+            'national_id' => ['sometimes', 'string', 'max:50', Rule::unique('users', 'national_id')->ignore($user->id)],
+            'avatar_src' => 'sometimes|nullable|string',
+            'linkedin' => 'sometimes|nullable|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Validation failed',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $user->update($validator->validated());
+
+        return response()->json([
+            'message' => 'EventsGate profile updated successfully',
+            'data' => $user->fresh()
+        ]);
+    }
+
 
 
 

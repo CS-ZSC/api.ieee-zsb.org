@@ -30,7 +30,9 @@ class User extends Authenticatable
         'email_verified_at',
         'remember_token',
         'groupable_id',
-        'groupable_type'
+        'groupable_type',
+        'phone_number',
+        'national_id'
     ];
 
     /**
