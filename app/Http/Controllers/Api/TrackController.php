@@ -6,9 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Models\Track;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use App\Traits\ImageUploadTrait;
 
 class TrackController extends Controller
 {
+    use ImageUploadTrait;
     public function index()
     {
         $tracks = Track::with([
@@ -36,7 +38,7 @@ class TrackController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'hashtag' => 'nullable|string|max:255',
-            'image' => 'nullable|string',
+            'image' => $this->getImageValidationRules('logo'), // Track uses logo
             'description' => 'nullable|string',
             'chapter_id' => 'required|exists:chapters,id',
         ]);
@@ -48,7 +50,14 @@ class TrackController extends Controller
             ], 422);
         }
 
-        $track = Track::create($validator->validated());
+        $data = $validator->validated();
+
+        // Handle image upload
+        if ($request->hasFile('image')) {
+            $data['image'] = $this->uploadImage($request->file('image'), 'images/tracks');
+        }
+
+        $track = Track::create($data);
 
         return response()->json([
             'message' => 'Track created successfully',
@@ -89,7 +98,7 @@ class TrackController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'sometimes|required|string|max:255',
             'hashtag' => 'nullable|string|max:255',
-            'image' => 'nullable|string',
+            'image' => $this->getImageValidationRules('logo'),
             'description' => 'nullable|string',
             'chapter_id' => 'sometimes|required|exists:chapters,id',
         ]);
@@ -101,7 +110,15 @@ class TrackController extends Controller
             ], 422);
         }
 
-        $track->update($validator->validated());
+        $data = $validator->validated();
+
+        // Handle image upload
+        if ($request->hasFile('image')) {
+            $this->deleteOldImage($track->image);
+            $data['image'] = $this->uploadImage($request->file('image'), 'images/tracks');
+        }
+
+        $track->update($data);
         $track->refresh();
 
         return response()->json([
@@ -120,6 +137,7 @@ class TrackController extends Controller
     {
         $this->authorize('delete', $track);
 
+        $this->deleteOldImage($track->image);
         $track->delete();
 
         return response()->json([

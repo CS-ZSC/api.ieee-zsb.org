@@ -10,9 +10,11 @@ use App\Models\Chapter;
 use App\Models\Committee;
 use App\Models\Track;
 use App\Models\User;
+use App\Traits\ImageUploadTrait;
 
 class UserController extends Controller
 {
+    use ImageUploadTrait;
     /**
      * Get logged-in user profile (Website)
      */
@@ -55,7 +57,7 @@ class UserController extends Controller
         $validator = Validator::make($request->all(), [
             'name'       => 'sometimes|string|max:255',
             'email'      => ['sometimes', 'email', Rule::unique('users', 'email')->ignore($user->id)],
-            'avatar_src' => 'sometimes|nullable|string',
+            'avatar_src' => $this->getImageValidationRules('avatar'),
             'linkedin'   => 'sometimes|nullable|string',
         ]);
 
@@ -66,12 +68,29 @@ class UserController extends Controller
             ], 422);
         }
 
-        $user->update($validator->validated());
+        $data = $validator->validated();
 
-        return response()->json([
-            'message' => 'Profile updated successfully',
-            'data'    => $user->fresh()
-        ]);
+        $oldAvatar = $user->avatar_src; // Get current avatar first
+
+        try {
+            // Handle avatar upload
+            if ($request->hasFile('avatar_src')) {
+                $this->deleteOldImage($oldAvatar); // Use variable instead of property access
+                $data['avatar_src'] = $this->uploadImage($request->file('avatar_src'), 'images/avatars');
+            }
+
+            $user->update($data);
+
+            return response()->json([
+                'message' => 'Profile updated successfully',
+                'data'    => $user->fresh()
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Profile update failed: ' . $e->getMessage(),
+                'error' => class_basename($e)
+            ], 500);
+        }
     }
 
     /**
@@ -108,7 +127,7 @@ class UserController extends Controller
             'name' => 'sometimes|string|max:255',
             'phone_number' => ['sometimes', 'string', 'max:20', Rule::unique('users', 'phone_number')->ignore($user->id)],
             'national_id' => ['sometimes', 'string', 'max:50', Rule::unique('users', 'national_id')->ignore($user->id)],
-            'avatar_src' => 'sometimes|nullable|string',
+            'avatar_src' => $this->getImageValidationRules('avatar'),
             'linkedin' => 'sometimes|nullable|string',
         ]);
 
@@ -119,7 +138,15 @@ class UserController extends Controller
             ], 422);
         }
 
-        $user->update($validator->validated());
+        $data = $validator->validated();
+
+        // Handle avatar upload
+        if ($request->hasFile('avatar_src')) {
+            $this->deleteOldImage($user->avatar_src);
+            $data['avatar_src'] = $this->uploadImage($request->file('avatar_src'), 'images/avatars');
+        }
+
+        $user->update($data);
 
         return response()->json([
             'message' => 'EventsGate profile updated successfully',
@@ -217,7 +244,7 @@ class UserController extends Controller
             'track_id'       => 'sometimes|nullable|integer|exists:tracks,id',
             'position_ids'   => 'sometimes|array',
             'position_ids.*' => 'integer|exists:positions,id',
-            'avatar_src'     => 'sometimes|nullable|string',
+            'avatar_src'     => $this->getImageValidationRules('avatar'),
             'linkedin'       => 'sometimes|nullable|string',
         ]);
 
@@ -229,6 +256,12 @@ class UserController extends Controller
         }
 
         $data = $validator->validated();
+
+        // Handle avatar upload
+        if ($request->hasFile('avatar_src')) {
+            $this->deleteOldImage($user->avatar_src);
+            $data['avatar_src'] = $this->uploadImage($request->file('avatar_src'), 'images/avatars');
+        }
 
         // Sync positions if provided
         if (isset($data['position_ids'])) {
@@ -264,6 +297,7 @@ class UserController extends Controller
     {
         $this->authorize('delete', $user);
 
+        $this->deleteOldImage($user->avatar_src);
         $user->delete();
 
         return response()->json([

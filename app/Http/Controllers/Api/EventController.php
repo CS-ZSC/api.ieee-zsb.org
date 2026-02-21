@@ -5,15 +5,17 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Event;
 use Illuminate\Http\Request;
+use App\Traits\ImageUploadTrait;
 
 class EventController extends Controller
 {
+    use ImageUploadTrait;
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $events = Event::all();
+        $events = Event::with('images')->get();
         return response()->json([
             'message' => 'Events list',
             'data' => $events
@@ -30,15 +32,27 @@ class EventController extends Controller
             'slug' => 'required|string|unique:events,slug',
             'overview' => 'nullable|string',
             'description' => 'nullable|string',
-            'logo' => 'nullable|string',
-            'cover_image' => 'nullable|string',
+            'logo' => $this->getImageValidationRules('logo'),
+            'cover_image' => $this->getImageValidationRules('cover'),
             'start_date' => 'required|date',
             'end_date' => 'required|date',
             'location' => 'required|string',
             'status' => 'required|string',
         ]);
 
-        $event = Event::create($validated);
+        $data = $validated;
+
+        // Handle logo upload
+        if ($request->hasFile('logo')) {
+            $data['logo'] = $this->uploadImage($request->file('logo'), 'images/events');
+        }
+
+        // Handle cover image upload
+        if ($request->hasFile('cover_image')) {
+            $data['cover_image'] = $this->uploadImage($request->file('cover_image'), 'images/events');
+        }
+
+        $event = Event::create($data);
         return response()->json([
             'message' => 'Event created successfully',
             'data' => $event
@@ -50,7 +64,7 @@ class EventController extends Controller
      */
     public function show($slug)
     {
-        $event = Event::where('slug', $slug)->first();
+        $event = Event::with('images')->where('slug', $slug)->first();
 
         if (!$event) {
             return response()->json([
@@ -84,15 +98,29 @@ class EventController extends Controller
             'slug' => 'sometimes|required|string|unique:events,slug,' . $event->id,
             'overview' => 'nullable|string',
             'description' => 'nullable|string',
-            'logo' => 'nullable|string',
-            'cover_image' => 'nullable|string',
+            'logo' => $this->getImageValidationRules('logo'),
+            'cover_image' => $this->getImageValidationRules('cover'),
             'start_date' => 'sometimes|required|date',
             'end_date' => 'sometimes|required|date',
             'location' => 'sometimes|required|string',
             'status' => 'sometimes|required|string',
         ]);
 
-        $event->update($validated);
+        $data = $validated;
+
+        // Handle logo upload
+        if ($request->hasFile('logo')) {
+            $this->deleteOldImage($event->logo);
+            $data['logo'] = $this->uploadImage($request->file('logo'), 'images/events');
+        }
+
+        // Handle cover image upload
+        if ($request->hasFile('cover_image')) {
+            $this->deleteOldImage($event->cover_image);
+            $data['cover_image'] = $this->uploadImage($request->file('cover_image'), 'images/events');
+        }
+
+        $event->update($data);
 
         return response()->json([
             'message' => 'Event updated successfully',
@@ -114,6 +142,8 @@ class EventController extends Controller
             ], 404);
         }
 
+        $this->deleteOldImage($event->logo);
+        $this->deleteOldImage($event->cover_image);
         $event->delete();
 
         return response()->json([

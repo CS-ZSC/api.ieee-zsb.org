@@ -29,7 +29,7 @@ class EventImageController extends Controller
             'image' => 'required|image|mimes:jpg,jpeg,png,webp|max:2048'
         ]);
 
-        $path = $request->file('image')->store('events', 'public');
+        $path = $request->file('image')->store('images/events', 'public');
 
         $image = EventImage::create([
             'event_id' => $event->id,
