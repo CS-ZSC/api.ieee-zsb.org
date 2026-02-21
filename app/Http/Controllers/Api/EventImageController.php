@@ -11,7 +11,8 @@ use Illuminate\Support\Facades\Storage;
 class EventImageController extends Controller
 {
     //
-    public function index($eventSlug) {
+    public function index($eventSlug)
+    {
         $event = Event::where('slug', $eventSlug)->firstOrFail();
 
         return response()->json([
@@ -20,7 +21,8 @@ class EventImageController extends Controller
         ]);
     }
 
-    public function store(Request $request, $eventSlug) {
+    public function store(Request $request, $eventSlug)
+    {
         $event = Event::where('slug', $eventSlug)->firstOrFail();
 
         $request->validate([
@@ -38,15 +40,20 @@ class EventImageController extends Controller
             'message' => 'image uploaded',
             'data' => $image
         ]);
-
     }
 
-    public function destroy($id) {
-        $image = EventImage::findOrFail($id);
+    public function destroy($slug, $imageId)
+    {
+        $event = Event::where('slug', $slug)->firstOrFail();
+
+        $image = EventImage::where('id', $imageId)
+            ->where('event_id', $event->id)
+            ->firstOrFail();
 
         if (Storage::disk('public')->exists($image->image_path)) {
             Storage::disk('public')->delete($image->image_path);
         }
+
         $image->delete();
 
         return response()->json([
