@@ -37,4 +37,11 @@ class Event extends Model
     {
         return 'slug';
     }
+
+    public function participants()
+    {
+        return $this->belongsToMany(User::class, 'event_participants')
+                    ->withPivot('role')
+                    ->withTimestamps();
+    }
 }
