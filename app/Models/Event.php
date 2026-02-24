@@ -46,4 +46,14 @@ class Event extends Model
     {
         return $this->hasMany(EventImage::class);
     }
+
+    public function speakers(): HasMany
+    {
+        return $this->hasMany(EventSpeaker::class);
+    }
+
+    public function sponsors(): HasMany
+    {
+        return $this->hasMany(EventSponsor::class);
+    }
 }
