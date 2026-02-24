@@ -13,8 +13,6 @@ Route::post('/login', [AuthController::class, 'eventsGateLogin']);
 Route::post('/logout', [AuthController::class, 'eventsGateLogout'])->middleware('auth:sanctum');
 
 //load all eventsgate subfolders automatically
-
 foreach (glob(__DIR__ . '/*/*.php') as $routeFile) {
     require $routeFile;
 }
-
