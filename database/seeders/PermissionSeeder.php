@@ -34,6 +34,24 @@ class PermissionSeeder extends Seeder
             'edit tracks',
             'delete tracks',
 
+            // Events
+            'view events',
+            'create events',
+            'edit events',
+            'delete events',
+
+            // Event Sub-resources
+            'manage event images',
+            'manage speakers',
+            'manage sponsors',
+
+            // Competitions
+            'view competitions',
+            'create competitions',
+            'edit competitions',
+            'delete competitions',
+            'manage competition prizes',
+
             // News
             'manage news',
 

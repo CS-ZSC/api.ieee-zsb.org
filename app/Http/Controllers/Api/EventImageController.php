@@ -25,6 +25,8 @@ class EventImageController extends Controller
     {
         $event = Event::where('slug', $eventSlug)->firstOrFail();
 
+        $this->authorize('manageImages', $event);
+
         $request->validate([
             'image' => 'required|image|mimes:jpg,jpeg,png,webp|max:2048'
         ]);
@@ -45,6 +47,8 @@ class EventImageController extends Controller
     public function destroy($slug, $imageId)
     {
         $event = Event::where('slug', $slug)->firstOrFail();
+
+        $this->authorize('manageImages', $event);
 
         $image = EventImage::where('id', $imageId)
             ->where('event_id', $event->id)

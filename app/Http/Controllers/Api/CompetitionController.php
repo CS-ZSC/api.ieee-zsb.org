@@ -10,17 +10,35 @@ class CompetitionController extends Controller
 {
     public function index()
     {
-        return Competition::with('prizes')->get();
+        $competitions = Competition::with('prizes')->get();
+        return response()->json([
+            'message' => 'Competitions list',
+            'data' => $competitions
+        ]);
     }
 
     public function show($id)
     {
-        return Competition::with('prizes')->findOrFail($id);
+        $competition = Competition::with('prizes')->find($id);
+
+        if (!$competition) {
+            return response()->json([
+                'message' => 'Competition not found',
+                'data' => null
+            ], 404);
+        }
+
+        return response()->json([
+            'message' => 'Competition details',
+            'data' => $competition
+        ]);
     }
 
     public function store(Request $request)
     {
-        $data = $request->validate([
+        $this->authorize('create', Competition::class);
+
+        $validated = $request->validate([
             'event_id' => 'nullable|integer',
             'chapter_id' => 'nullable|integer',
             'name' => 'required|string',
@@ -28,29 +46,62 @@ class CompetitionController extends Controller
             'type' => 'required|in:individual,team',
             'max_team_members' => 'nullable|integer',
         ]);
-        $competition = Competition::create($data);
-        return $competition;
+
+        $competition = Competition::create($validated);
+        return response()->json([
+            'message' => 'Competition created successfully',
+            'data' => $competition
+        ]);
     }
 
     public function update(Request $request, $id)
     {
-        $competition = Competition::findOrFail($id);
-        $data = $request->validate([
-            'event_id' => 'nullable|integer',
-            'chapter_id' => 'nullable|integer',
-            'name' => 'required|string',
+        $competition = Competition::find($id);
+
+        if (!$competition) {
+            return response()->json([
+                'message' => 'Competition not found',
+                'data' => null
+            ], 404);
+        }
+
+        $this->authorize('update', $competition);
+
+        $validated = $request->validate([
+            'event_id' => 'sometimes|nullable|integer',
+            'chapter_id' => 'sometimes|nullable|integer',
+            'name' => 'sometimes|required|string',
             'overview' => 'nullable|string',
-            'type' => 'required|in:individual,team',
+            'type' => 'sometimes|required|in:individual,team',
             'max_team_members' => 'nullable|integer',
         ]);
-        $competition->update($data);
-        return $competition;
+
+        $competition->update($validated);
+
+        return response()->json([
+            'message' => 'Competition updated successfully',
+            'data' => $competition
+        ]);
     }
 
     public function destroy($id)
     {
-        $competition = Competition::findOrFail($id);
+        $competition = Competition::find($id);
+
+        if (!$competition) {
+            return response()->json([
+                'message' => 'Competition not found',
+                'data' => null
+            ], 404);
+        }
+
+        $this->authorize('delete', $competition);
+
         $competition->delete();
-        return response()->json(['message' => 'Competition deleted']);
+
+        return response()->json([
+            'message' => 'Competition deleted successfully',
+            'data' => null
+        ]);
     }
 }

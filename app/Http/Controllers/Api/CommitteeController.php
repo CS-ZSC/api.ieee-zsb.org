@@ -99,7 +99,7 @@ class CommitteeController extends Controller
                 'required',
                 'string',
                 'max:255',
-                Rule::unique('images/committees', 'name')->ignore($committee->id),
+                Rule::unique('committees', 'name')->ignore($committee->id),
             ],
             'hashtag' => 'nullable|string|max:255',
             'description' => 'nullable|string',

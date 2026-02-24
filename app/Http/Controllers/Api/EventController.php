@@ -27,6 +27,8 @@ class EventController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('create', Event::class);
+
         $validated = $request->validate([
             'name' => 'required|string',
             'slug' => 'required|string|unique:events,slug',
@@ -93,6 +95,8 @@ class EventController extends Controller
             ], 404);
         }
 
+        $this->authorize('update', $event);
+
         $validated = $request->validate([
             'name' => 'sometimes|required|string',
             'slug' => 'sometimes|required|string|unique:events,slug,' . $event->id,
@@ -141,6 +145,8 @@ class EventController extends Controller
                 'data' => null
             ], 404);
         }
+
+        $this->authorize('delete', $event);
 
         $this->deleteOldImage($event->logo);
         $this->deleteOldImage($event->cover_image);

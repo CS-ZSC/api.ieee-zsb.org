@@ -176,7 +176,7 @@ class UserSeeder extends Seeder
                 'group_type' => 'chapter',
                 'group_name' => 'CS',
                 'track_name' => 'Backend',
-                'position' => 'Track Vice-Lead',
+                'position' => ['Dev', 'Track Vice-Lead'],
             ],
 
             // ===== PES Chapter =====
@@ -599,10 +599,17 @@ class UserSeeder extends Seeder
                 ]
             );
 
-            // Attach position
-            $position = $positions[$userData['position']] ?? null;
-            if ($position && !$user->positions()->where('position_id', $position->id)->exists()) {
-                $user->positions()->attach($position->id);
+            // Attach positions (handle multiple correctly)
+            $userPositions = is_array($userData['position']) ? $userData['position'] : [$userData['position']];
+            $positionIds = [];
+            foreach ($userPositions as $positionName) {
+                $position = $positions[$positionName] ?? null;
+                if ($position) { // Only check if position exists
+                    $positionIds[] = $position->id;
+                }
+            }
+            if (!empty($positionIds)) {
+                $user->positions()->syncWithoutDetaching($positionIds);
             }
         }
     }
