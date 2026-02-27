@@ -6,9 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Models\News;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use App\Traits\ImageUploadTrait;
 
 class NewsController extends Controller
 {
+    use ImageUploadTrait;
     public function index()
     {
         $news = News::with('sections')->get();
@@ -37,12 +39,12 @@ class NewsController extends Controller
             'home_item' => 'sometimes|boolean',
             'tags' => 'nullable|array',
             'tags.*' => 'string',
-            'main_photo' => 'nullable|string',
+            'main_photo' => $this->getImageValidationRules('default'),
             'sections' => 'nullable|array',
             'sections.*.heading' => 'required|string|max:255',
             'sections.*.descriptions' => 'required|array',
             'sections.*.descriptions.*' => 'string',
-            'sections.*.photo' => 'nullable|string',
+            'sections.*.photo' => $this->getImageValidationRules('default'),
             'sections.*.photo_description' => 'nullable|string|max:255',
         ]);
 
@@ -57,13 +59,23 @@ class NewsController extends Controller
         $sectionsData = $data['sections'] ?? [];
         unset($data['sections']);
 
+        // Handle main photo upload
+        if ($request->hasFile('main_photo')) {
+            $data['main_photo'] = $this->uploadImage($request->file('main_photo'), 'images/news');
+        }
+
         $news = News::create($data);
 
         foreach ($sectionsData as $index => $section) {
+            $sectionPhoto = null;
+            if ($request->hasFile("sections.{$index}.photo")) {
+                $sectionPhoto = $this->uploadImage($request->file("sections.{$index}.photo"), 'images/news');
+            }
+
             $news->sections()->create([
                 'heading' => $section['heading'],
                 'descriptions' => $section['descriptions'],
-                'photo' => $section['photo'] ?? null,
+                'photo' => $sectionPhoto,
                 'photo_description' => $section['photo_description'] ?? null,
                 'sort_order' => $index,
             ]);
@@ -103,12 +115,12 @@ class NewsController extends Controller
             'home_item' => 'sometimes|boolean',
             'tags' => 'nullable|array',
             'tags.*' => 'string',
-            'main_photo' => 'nullable|string',
+            'main_photo' => $this->getImageValidationRules('default'),
             'sections' => 'nullable|array',
             'sections.*.heading' => 'required|string|max:255',
             'sections.*.descriptions' => 'required|array',
             'sections.*.descriptions.*' => 'string',
-            'sections.*.photo' => 'nullable|string',
+            'sections.*.photo' => $this->getImageValidationRules('default'),
             'sections.*.photo_description' => 'nullable|string|max:255',
         ]);
 
@@ -121,17 +133,33 @@ class NewsController extends Controller
 
         $data = $validator->validated();
 
+        // Handle main photo upload
+        if ($request->hasFile('main_photo')) {
+            $this->deleteOldImage($news->main_photo);
+            $data['main_photo'] = $this->uploadImage($request->file('main_photo'), 'images/news');
+        }
+
         // If sections are provided, replace them all
         if (isset($data['sections'])) {
             $sectionsData = $data['sections'];
             unset($data['sections']);
 
+            // Delete old section images
+            foreach ($news->sections as $oldSection) {
+                $this->deleteOldImage($oldSection->photo);
+            }
             $news->sections()->delete();
+
             foreach ($sectionsData as $index => $section) {
+                $sectionPhoto = null;
+                if ($request->hasFile("sections.{$index}.photo")) {
+                    $sectionPhoto = $this->uploadImage($request->file("sections.{$index}.photo"), 'images/news');
+                }
+
                 $news->sections()->create([
                     'heading' => $section['heading'],
                     'descriptions' => $section['descriptions'],
-                    'photo' => $section['photo'] ?? null,
+                    'photo' => $sectionPhoto,
                     'photo_description' => $section['photo_description'] ?? null,
                     'sort_order' => $index,
                 ]);
@@ -153,6 +181,10 @@ class NewsController extends Controller
             abort(403, 'You do not have permission to manage news.');
         }
 
+        $this->deleteOldImage($news->main_photo);
+        foreach ($news->sections as $section) {
+            $this->deleteOldImage($section->photo);
+        }
         $news->delete();
 
         return response()->json([

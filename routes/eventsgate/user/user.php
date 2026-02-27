@@ -8,7 +8,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     // EventsGate User Profile Routes
     Route::get('/profile', [UserController::class, 'eventsGateProfile']);
-    Route::put('/updatemyprofile', [UserController::class, 'eventsGateUpdateProfile']);
+    Route::post('/updatemyprofile', [UserController::class, 'eventsGateUpdateProfile']);
 
 
 });

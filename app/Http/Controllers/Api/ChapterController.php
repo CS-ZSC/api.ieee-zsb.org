@@ -7,9 +7,11 @@ use App\Models\Chapter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use App\Traits\ImageUploadTrait;
 
 class ChapterController extends Controller
 {
+    use ImageUploadTrait;
     public function index()
     {
 
@@ -32,7 +34,7 @@ class ChapterController extends Controller
         $validator = Validator::make($request->all(), [
             'name'           => 'required|string|max:255|unique:chapters,name',
             'short_name'     => 'required|string|max:50|unique:chapters,short_name',
-            'logo'           => 'nullable|string',
+            'logo'           => $this->getImageValidationRules('logo'), // Chapter uses logo
             'color_scheme_1' => 'nullable|string|max:20',
             'color_scheme_2' => 'nullable|string|max:20',
         ]);
@@ -44,7 +46,14 @@ class ChapterController extends Controller
             ], 422);
         }
 
-        $chapter = Chapter::create($validator->validated());
+        $data = $validator->validated();
+
+        // Handle logo upload
+        if ($request->hasFile('logo')) {
+            $data['logo'] = $this->uploadImage($request->file('logo'), 'images/chapters');
+        }
+
+        $chapter = Chapter::create($data);
 
         return response()->json([
             'message' => 'Chapter created successfully',
@@ -87,7 +96,7 @@ class ChapterController extends Controller
                 'max:50',
                 Rule::unique('chapters', 'short_name')->ignore($chapter->id),
             ],
-            'logo'           => 'nullable|string',
+            'logo'           => $this->getImageValidationRules('logo'),
             'color_scheme_1' => 'nullable|string|max:20',
             'color_scheme_2' => 'nullable|string|max:20',
         ]);
@@ -99,7 +108,15 @@ class ChapterController extends Controller
             ], 422);
         }
 
-        $chapter->update($validator->validated());
+        $data = $validator->validated();
+
+        // Handle logo upload
+        if ($request->hasFile('logo')) {
+            $this->deleteOldImage($chapter->logo);
+            $data['logo'] = $this->uploadImage($request->file('logo'), 'images/chapters');
+        }
+
+        $chapter->update($data);
         $chapter->refresh();
 
         return response()->json([
@@ -114,6 +131,7 @@ class ChapterController extends Controller
         $this->authorize('delete', $chapter);
 
         try {
+            $this->deleteOldImage($chapter->logo);
             $chapter->delete();
 
             return response()->json([

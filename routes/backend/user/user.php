@@ -17,3 +17,4 @@ Route::prefix('auth')->group(function () {
 
 Route::apiResource('users', UserController::class)
 ->middleware('auth:sanctum');
+Route::post('users/{user}', [UserController::class, 'update'])->middleware('auth:sanctum');

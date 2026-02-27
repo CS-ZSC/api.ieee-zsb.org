@@ -14,6 +14,10 @@ use App\Models\News;
 use App\Policies\ChapterPolicy;
 use App\Policies\CommitteePolicy;
 use App\Policies\TrackPolicy;
+use App\Models\Event;
+use App\Models\Competition;
+use App\Policies\EventPolicy;
+use App\Policies\CompetitionPolicy;
 use App\Policies\UserPolicy;
 
 
@@ -54,5 +58,7 @@ class AppServiceProvider extends ServiceProvider
         Committee::class => CommitteePolicy::class,
         Track::class     => TrackPolicy::class,
         User::class      => UserPolicy::class,
+        Event::class       => EventPolicy::class,
+        Competition::class => CompetitionPolicy::class,
     ];
 }

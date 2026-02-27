@@ -7,9 +7,12 @@ use App\Models\Committee;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use App\Traits\ImageUploadTrait;
 
 class CommitteeController extends Controller
 {
+    use ImageUploadTrait;
+
     public function index()
     {
         $committees = Committee::with([
@@ -37,7 +40,7 @@ class CommitteeController extends Controller
             'name' => 'required|string|max:255|unique:committees,name',
             'hashtag' => 'nullable|string|max:255',
             'description' => 'nullable|string',
-            'image' => 'nullable|string',
+            'image' => $this->getImageValidationRules('logo'), // Committee uses logo
         ]);
 
         if ($validator->fails()) {
@@ -47,7 +50,14 @@ class CommitteeController extends Controller
             ], 422);
         }
 
-        $committee = Committee::create($validator->validated());
+        $data = $validator->validated();
+
+        // Handle image upload
+        if ($request->hasFile('image')) {
+            $data['image'] = $this->uploadImage($request->file('image'), 'images/committees');
+        }
+
+        $committee = Committee::create($data);
 
         return response()->json([
             'message' => 'Committee created successfully',
@@ -93,7 +103,7 @@ class CommitteeController extends Controller
             ],
             'hashtag' => 'nullable|string|max:255',
             'description' => 'nullable|string',
-            'image' => 'nullable|string',
+            'image' => $this->getImageValidationRules('logo'),
         ]);
 
         if ($validator->fails()) {
@@ -103,7 +113,15 @@ class CommitteeController extends Controller
             ], 422);
         }
 
-        $committee->update($validator->validated());
+        $data = $validator->validated();
+
+        // Handle image upload
+        if ($request->hasFile('image')) {
+            $this->deleteOldImage($committee->image);
+            $data['image'] = $this->uploadImage($request->file('image'), 'images/committees');
+        }
+
+        $committee->update($data);
         $committee->refresh();
 
         return response()->json([
@@ -121,6 +139,7 @@ class CommitteeController extends Controller
     {
         $this->authorize('delete', $committee);
 
+        $this->deleteOldImage($committee->image);
         $committee->delete();
 
         return response()->json([

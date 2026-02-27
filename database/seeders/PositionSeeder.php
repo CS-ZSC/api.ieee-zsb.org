@@ -24,6 +24,7 @@ class PositionSeeder extends Seeder
             'Vice Lead' => null,  // vice committee leader OR vice chapter chairperson
             'Track Lead' => 'track leader',
             'Track Vice-Lead' => 'vice track leader',
+            'Dev' => 'dev',        // Developer with full access
         ];
 
         foreach ($positions as $name => $roleName) {

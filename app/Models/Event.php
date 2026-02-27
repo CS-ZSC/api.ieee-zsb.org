@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Event extends Model
 {
@@ -38,10 +39,19 @@ class Event extends Model
         return 'slug';
     }
 
+<<<<<<< Task-9
     public function participants()
     {
         return $this->belongsToMany(User::class, 'event_participants')
                     ->withPivot('role')
                     ->withTimestamps();
+=======
+    /**
+     * Get the images for the event.
+     */
+    public function images(): HasMany
+    {
+        return $this->hasMany(EventImage::class);
+>>>>>>> main
     }
 }
