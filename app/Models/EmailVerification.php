@@ -106,6 +106,13 @@ class EmailVerification extends Model
             'email_verified_at' => now(),
         ]);
 
+        // Assign Visitor position and role for EventsGate users
+        $visitorPosition = \App\Models\Position::where('name', 'Visitor')->first();
+        if ($visitorPosition) {
+            $user->positions()->attach($visitorPosition->id);
+        }
+        $user->assignDefaultRole();
+
         // Delete verification record after user creation
         $this->delete();
 

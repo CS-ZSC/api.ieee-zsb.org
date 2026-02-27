@@ -25,6 +25,7 @@ class PositionSeeder extends Seeder
             'Track Lead' => 'track leader',
             'Track Vice-Lead' => 'vice track leader',
             'Dev' => 'dev',        // Developer with full access
+            'Visitor' => 'visitor', // EventsGate registered users
         ];
 
         foreach ($positions as $name => $roleName) {

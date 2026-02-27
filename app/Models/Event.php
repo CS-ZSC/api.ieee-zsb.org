@@ -39,19 +39,16 @@ class Event extends Model
         return 'slug';
     }
 
-<<<<<<< Task-9
-    public function participants()
-    {
-        return $this->belongsToMany(User::class, 'event_participants')
-                    ->withPivot('role')
-                    ->withTimestamps();
-=======
-    /**
+/**
      * Get the images for the event.
      */
     public function images(): HasMany
     {
         return $this->hasMany(EventImage::class);
->>>>>>> main
+    }
+
+    public function participants(): HasMany
+    {
+        return $this->hasMany(EventParticipant::class);
     }
 }

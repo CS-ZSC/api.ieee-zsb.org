@@ -13,24 +13,11 @@ return new class extends Migration
     {
         Schema::create('event_participants', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('event_id');
-    
-            $table->foreign('user_id')
-                    ->references('id')
-                    ->on('users')
-                    ->cascadeOnDelete();
-
-            $table->foreign('event_id')
-                    ->references('id')
-                    ->on('events')
-                    ->cascadeOnDelete();
-
-            $table->text('role');
-
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('event_id')->constrained()->cascadeOnDelete();
+            $table->string('role'); // spectator / competitor
             $table->unique(['user_id', 'event_id']);
-
-            $table->timestampsTz();
+            $table->timestamps();
         });
     }
 

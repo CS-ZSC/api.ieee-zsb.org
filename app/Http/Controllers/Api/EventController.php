@@ -5,11 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Event;
 use Illuminate\Http\Request;
-<<<<<<< Task-9
-use Illuminate\Support\Facades\Validator;
-=======
 use App\Traits\ImageUploadTrait;
->>>>>>> main
 
 class EventController extends Controller
 {

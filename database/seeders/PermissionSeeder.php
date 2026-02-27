@@ -42,6 +42,7 @@ class PermissionSeeder extends Seeder
 
             // Event Sub-resources
             'manage event images',
+            'manage event participants',
             'manage speakers',
             'manage sponsors',
 

@@ -4,18 +4,115 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Event;
+use App\Models\EventParticipant;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 
 class EventParticipantController extends Controller
 {
+    public function index($slug)
+    {
+        $event = Event::where('slug', $slug)->first();
 
+        if (!$event) {
+            return response()->json([
+                'message' => 'Event not found',
+                'data' => null
+            ], 404);
+        }
+
+        return response()->json([
+            'message' => 'Event participants',
+            'data' => $event->participants()->with('user')->get()
+        ]);
+    }
+
+    /**
+     * Admin: add a participant to an event.
+     */
+    public function store(Request $request, $slug)
+    {
+        $event = Event::where('slug', $slug)->first();
+
+        if (!$event) {
+            return response()->json([
+                'message' => 'Event not found',
+                'data' => null
+            ], 404);
+        }
+
+        $this->authorize('manageParticipants', $event);
+
+        $validated = $request->validate([
+            'user_id' => 'required|integer|exists:users,id',
+            'role' => 'required|string|in:spectator,competitor',
+        ]);
+
+        $existing = EventParticipant::where('event_id', $event->id)
+            ->where('user_id', $validated['user_id'])
+            ->first();
+
+        if ($existing) {
+            return response()->json([
+                'message' => 'User is already registered in this event',
+                'data' => $existing
+            ], 409);
+        }
+
+        $participant = EventParticipant::create([
+            'event_id' => $event->id,
+            'user_id' => $validated['user_id'],
+            'role' => $validated['role'],
+        ]);
+
+        return response()->json([
+            'message' => 'Participant added successfully',
+            'data' => $participant
+        ]);
+    }
+
+    /**
+     * Admin: remove a participant from an event.
+     */
+    public function destroy($slug, $participantId)
+    {
+        $event = Event::where('slug', $slug)->first();
+
+        if (!$event) {
+            return response()->json([
+                'message' => 'Event not found',
+                'data' => null
+            ], 404);
+        }
+
+        $this->authorize('manageParticipants', $event);
+
+        $participant = EventParticipant::where('id', $participantId)
+            ->where('event_id', $event->id)
+            ->first();
+
+        if (!$participant) {
+            return response()->json([
+                'message' => 'Participant not found',
+                'data' => null
+            ], 404);
+        }
+
+        $participant->delete();
+
+        return response()->json([
+            'message' => 'Participant removed successfully',
+            'data' => null
+        ]);
+    }
+
+    /**
+     * EventsGate: visitor registers themselves in an event.
+     */
     public function registerUser(Request $request, $slug)
     {
         $user = $request->user();
         $event = Event::where('slug', $slug)->first();
 
-        // check if event exists
         if (!$event) {
             return response()->json([
                 'message' => 'Event not found',
@@ -23,38 +120,49 @@ class EventParticipantController extends Controller
             ], 404);
         }
 
-        // Validate input
-        $validator = Validator::make($request->all(), [
-            'role' => 'required|string',
-        ]);
-
-        if ($validator->fails()) {
+        // Only visitors can register
+        if (!$user->positions()->where('name', 'Visitor')->exists()) {
             return response()->json([
-                'message' => 'Validation failed',
-                'errors'  => $validator->errors(),
-            ], 422);
+                'message' => 'Only visitors can register for events',
+                'data' => null
+            ], 403);
         }
 
-        $role = $validator->validated()['role'];
-        $event->participants()->syncWithoutDetaching([
-            $user->id => ['role' => $role]
+        $validated = $request->validate([
+            'role' => 'required|string|in:spectator,competitor',
         ]);
-    
-        return response()->json([
-            'message' => 'Registered successfully',
+
+        $existing = EventParticipant::where('event_id', $event->id)
+            ->where('user_id', $user->id)
+            ->first();
+
+        if ($existing) {
+            return response()->json([
+                'message' => 'You are already registered in this event',
+                'data' => $existing
+            ], 409);
+        }
+
+        $participant = EventParticipant::create([
             'event_id' => $event->id,
             'user_id' => $user->id,
-            'role' => $role
+            'role' => $validated['role'],
         ]);
-    
+
+        return response()->json([
+            'message' => 'Registered successfully',
+            'data' => $participant
+        ]);
     }
 
+    /**
+     * EventsGate: visitor unregisters themselves from an event.
+     */
     public function unregisterUser(Request $request, $slug)
     {
         $user = $request->user();
         $event = Event::where('slug', $slug)->first();
 
-        //check if event exists
         if (!$event) {
             return response()->json([
                 'message' => 'Event not found',
@@ -62,23 +170,22 @@ class EventParticipantController extends Controller
             ], 404);
         }
 
-        //check if user is registered in this event
-        if (!$event->participants()->where('user_id', $user->id)->exists()) {
+        $participant = EventParticipant::where('event_id', $event->id)
+            ->where('user_id', $user->id)
+            ->first();
+
+        if (!$participant) {
             return response()->json([
-                'message' => 'User is not registered in this event'
+                'message' => 'You are not registered in this event',
+                'data' => null
             ], 404);
         }
 
-        //remove user from event participants
-        $event->participants()->detach($user->id);
+        $participant->delete();
 
         return response()->json([
             'message' => 'Unregistered successfully',
-            'event_id' => $event->id,
-            'user_id' => $user->id
+            'data' => null
         ]);
-
-
-    
     }
 }

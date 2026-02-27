@@ -136,5 +136,21 @@ class RoleSeeder extends Seeder
                 'view tracks',
             ])->pluck('id')
         );
+
+        /*
+    |--------------------------------------------------------------------------
+    | Visitor (EventsGate Users)
+    |--------------------------------------------------------------------------
+    */
+        $visitor = Role::firstOrCreate(
+            ['name' => 'visitor'],
+            ['scope_type' => 'global']
+        );
+        $visitor->permissions()->sync(
+            Permission::whereIn('name', [
+                'view events',
+                'view competitions',
+            ])->pluck('id')
+        );
     }
 }

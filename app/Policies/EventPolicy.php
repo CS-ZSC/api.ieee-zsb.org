@@ -56,4 +56,9 @@ class EventPolicy
     {
         return $user->hasPermission('manage sponsors');
     }
+
+    public function manageParticipants(User $user)
+    {
+        return $user->hasPermission('manage event participants');
+    }
 }
