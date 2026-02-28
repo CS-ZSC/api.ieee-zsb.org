@@ -3,96 +3,173 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Event;
 use App\Models\EventSpeaker;
-use Illuminate\Support\Facades\Storage;
-
-
+use App\Traits\ImageUploadTrait;
+use Illuminate\Http\Request;
 
 class EventSpeakerController extends Controller
 {
-    //
-    public function index()
+    use ImageUploadTrait;
+    public function index($slug)
     {
-        $speakers = EventSpeaker::get();
-        return response()->json($speakers);
-    }
-
-    public function store(Request $request)
-    {
-        $request->validate([
-            'event_id' => 'required|exists:events,id',
-            'name' => 'required|string|max:255',
-            'email' => 'required|email',
-            'linkedin_url' => 'nullable|string',
-            'bio' => 'nullable|string',
-            'photo' => 'nullable|image|max:2048'
-        ]);
-
-        $eventId = $request->input('event_id');
-        $event = Event::withoutGlobalScopes()->find($eventId);
+        $event = Event::where('slug', $slug)->first();
 
         if (!$event) {
             return response()->json([
                 'message' => 'Event not found',
                 'data' => null
-            ]);
+            ], 404);
         }
 
-        $photoPath = null;
-        if ($request->hasFile('photo')) {
-            $photoPath = $request->file('photo')->store('speakers', 'public');
+        return response()->json([
+            'message' => 'Event speakers',
+            'data' => $event->speakers
+        ]);
+    }
+
+    public function show($slug, $speakerId)
+    {
+        $event = Event::where('slug', $slug)->first();
+
+        if (!$event) {
+            return response()->json([
+                'message' => 'Event not found',
+                'data' => null
+            ], 404);
         }
 
-        $speaker = EventSpeaker::create([
-            'event_id' => $request->event_id,
-            'name' => $request->name,
-            'email' => $request->email,
-            'linkedin_url' => $request->linkedin_url,
-            'bio' => $request->bio,
-            'photo' => $photoPath
+        $speaker = EventSpeaker::where('id', $speakerId)
+            ->where('event_id', $event->id)
+            ->first();
+
+        if (!$speaker) {
+            return response()->json([
+                'message' => 'Speaker not found',
+                'data' => null
+            ], 404);
+        }
+
+        return response()->json([
+            'message' => 'Speaker details',
+            'data' => $speaker
+        ]);
+    }
+
+    public function store(Request $request, $slug)
+    {
+        $event = Event::where('slug', $slug)->first();
+
+        if (!$event) {
+            return response()->json([
+                'message' => 'Event not found',
+                'data' => null
+            ], 404);
+        }
+
+        $this->authorize('manageSpeakers', $event);
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email',
+            'linkedin_url' => 'nullable|string',
+            'bio' => 'nullable|string',
+            'photo' => $this->getImageValidationRules('default'),
         ]);
 
-        return response()->json($speaker);
-    }
-
-    public function show($id)
-    {
-        return EventSpeaker::findOrFail($id);
-    }
-
-    public function update(Request $request, $id)
-    {
-        $speaker = EventSpeaker::findOrFail($id);
-
-        $data = $request->except('_method');
+        $data = $validated;
+        $data['event_id'] = $event->id;
 
         if ($request->hasFile('photo')) {
-            if ($speaker->photo) {
-                Storage::disk('public')->delete($speaker->photo);
-            }
+            $data['photo'] = $this->uploadImage($request->file('photo'), 'images/speakers');
+        }
 
-            $data['photo'] = $request->file('photo')->store('speakers', 'public');
+        $speaker = EventSpeaker::create($data);
+
+        return response()->json([
+            'message' => 'Speaker created successfully',
+            'data' => $speaker
+        ]);
+    }
+
+    public function update(Request $request, $slug, $speakerId)
+    {
+        $event = Event::where('slug', $slug)->first();
+
+        if (!$event) {
+            return response()->json([
+                'message' => 'Event not found',
+                'data' => null
+            ], 404);
+        }
+
+        $this->authorize('manageSpeakers', $event);
+
+        $speaker = EventSpeaker::where('id', $speakerId)
+            ->where('event_id', $event->id)
+            ->first();
+
+        if (!$speaker) {
+            return response()->json([
+                'message' => 'Speaker not found',
+                'data' => null
+            ], 404);
+        }
+
+        $validated = $request->validate([
+            'name' => 'sometimes|required|string|max:255',
+            'email' => 'sometimes|required|email',
+            'linkedin_url' => 'nullable|string',
+            'bio' => 'nullable|string',
+            'photo' => $this->getImageValidationRules('default'),
+        ]);
+
+        $data = $validated;
+
+        if ($request->hasFile('photo')) {
+            $this->deleteOldImage($speaker->photo);
+            $data['photo'] = $this->uploadImage($request->file('photo'), 'images/speakers');
         }
 
         $speaker->update($data);
 
-        return response()->json($speaker);
+        return response()->json([
+            'message' => 'Speaker updated successfully',
+            'data' => $speaker
+        ]);
     }
 
-    public function destroy($id)
+    public function destroy($slug, $speakerId)
     {
-        $speaker = EventSpeaker::findOrFail($id);
+        $event = Event::where('slug', $slug)->first();
 
-        if ($speaker->photo) {
-            Storage::disk('public')->delete($speaker->photo);
+        if (!$event) {
+            return response()->json([
+                'message' => 'Event not found',
+                'data' => null
+            ], 404);
         }
+
+        $this->authorize('manageSpeakers', $event);
+
+        $speaker = EventSpeaker::where('id', $speakerId)
+            ->where('event_id', $event->id)
+            ->first();
+
+        if (!$speaker) {
+            return response()->json([
+                'message' => 'Speaker not found',
+                'data' => null
+            ], 404);
+        }
+
+        $this->deleteOldImage($speaker->photo);
 
         $speaker->delete();
 
         return response()->json([
-            'message' => 'Speaker deleted'
+            'message' => 'Speaker deleted successfully',
+            'data' => null
         ]);
     }
 }

@@ -3,80 +3,169 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Event;
 use App\Models\EventSponsor;
+use App\Traits\ImageUploadTrait;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
-
 
 class EventSponsorController extends Controller
 {
-    //
-    public function index()
+    use ImageUploadTrait;
+    public function index($slug)
     {
-        return EventSponsor::all();
-    }
+        $event = Event::where('slug', $slug)->first();
 
-    public function show($id)
-    {
-        return EventSponsor::findOrFail($id);
-    }
-
-    public function store(Request $request)
-    {
-        $request->validate([
-            'event_id' => 'required|exists:events,id',
-            'name' => 'required',
-            'logo' => 'image|mimes:jpg,jpeg,png|max:2048',
-            'website_url' => 'nullable|url'
-        ]);
-
-        $path = null;
-
-        if ($request->hasFile('logo')) {
-            $path = $request->file('logo')->store('sponsors', 'public');
+        if (!$event) {
+            return response()->json([
+                'message' => 'Event not found',
+                'data' => null
+            ], 404);
         }
 
-        $sponsor = EventSponsor::create([
-            'event_id' => $request->event_id,
-            'name' => $request->name,
-            'logo' => $path,
-            'website_url' => $request->website_url
+        return response()->json([
+            'message' => 'Event sponsors',
+            'data' => $event->sponsors
         ]);
-
-        return response()->json($sponsor);
     }
 
-    public function update(Request $request, $id)
+    public function show($slug, $sponsorId)
     {
-        $sponsor = EventSponsor::findOrFail($id);
+        $event = Event::where('slug', $slug)->first();
 
-        $data = $request->except('_method');
+        if (!$event) {
+            return response()->json([
+                'message' => 'Event not found',
+                'data' => null
+            ], 404);
+        }
+
+        $sponsor = EventSponsor::where('id', $sponsorId)
+            ->where('event_id', $event->id)
+            ->first();
+
+        if (!$sponsor) {
+            return response()->json([
+                'message' => 'Sponsor not found',
+                'data' => null
+            ], 404);
+        }
+
+        return response()->json([
+            'message' => 'Sponsor details',
+            'data' => $sponsor
+        ]);
+    }
+
+    public function store(Request $request, $slug)
+    {
+        $event = Event::where('slug', $slug)->first();
+
+        if (!$event) {
+            return response()->json([
+                'message' => 'Event not found',
+                'data' => null
+            ], 404);
+        }
+
+        $this->authorize('manageSponsors', $event);
+
+        $validated = $request->validate([
+            'name' => 'required|string',
+            'logo' => $this->getImageValidationRules('logo'),
+            'website_url' => 'nullable|url',
+        ]);
+
+        $data = $validated;
+        $data['event_id'] = $event->id;
 
         if ($request->hasFile('logo')) {
-            if ($sponsor->logo) {
-                Storage::disk('public')->delete($sponsor->logo);
-            }
+            $data['logo'] = $this->uploadImage($request->file('logo'), 'images/sponsors');
+        }
 
-            $data['logo'] = $request->file('logo')->store('sponsors', 'public');
+        $sponsor = EventSponsor::create($data);
+
+        return response()->json([
+            'message' => 'Sponsor created successfully',
+            'data' => $sponsor
+        ]);
+    }
+
+    public function update(Request $request, $slug, $sponsorId)
+    {
+        $event = Event::where('slug', $slug)->first();
+
+        if (!$event) {
+            return response()->json([
+                'message' => 'Event not found',
+                'data' => null
+            ], 404);
+        }
+
+        $this->authorize('manageSponsors', $event);
+
+        $sponsor = EventSponsor::where('id', $sponsorId)
+            ->where('event_id', $event->id)
+            ->first();
+
+        if (!$sponsor) {
+            return response()->json([
+                'message' => 'Sponsor not found',
+                'data' => null
+            ], 404);
+        }
+
+        $validated = $request->validate([
+            'name' => 'sometimes|required|string',
+            'logo' => $this->getImageValidationRules('logo'),
+            'website_url' => 'nullable|url',
+        ]);
+
+        $data = $validated;
+
+        if ($request->hasFile('logo')) {
+            $this->deleteOldImage($sponsor->logo);
+            $data['logo'] = $this->uploadImage($request->file('logo'), 'images/sponsors');
         }
 
         $sponsor->update($data);
 
-        return response()->json($sponsor);
+        return response()->json([
+            'message' => 'Sponsor updated successfully',
+            'data' => $sponsor
+        ]);
     }
 
-    public function destroy($id)
+    public function destroy($slug, $sponsorId)
     {
-        $sponsor = EventSponsor::findOrFail($id);
+        $event = Event::where('slug', $slug)->first();
 
-        if ($sponsor->logo) {
-            Storage::disk('public')->delete($sponsor->logo);
+        if (!$event) {
+            return response()->json([
+                'message' => 'Event not found',
+                'data' => null
+            ], 404);
         }
+
+        $this->authorize('manageSponsors', $event);
+
+        $sponsor = EventSponsor::where('id', $sponsorId)
+            ->where('event_id', $event->id)
+            ->first();
+
+        if (!$sponsor) {
+            return response()->json([
+                'message' => 'Sponsor not found',
+                'data' => null
+            ], 404);
+        }
+
+        $this->deleteOldImage($sponsor->logo);
 
         $sponsor->delete();
 
         return response()->json([
-            "message" => "Deleted successfully"
+            'message' => 'Sponsor deleted successfully',
+            'data' => null
         ]);
     }
 }

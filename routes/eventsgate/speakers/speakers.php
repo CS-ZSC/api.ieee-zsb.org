@@ -3,4 +3,5 @@
 use App\Http\Controllers\Api\EventSpeakerController;
 use Illuminate\Support\Facades\Route;
 
-Route::apiResource('speakers', EventSpeakerController::class);
+Route::get('events/{event}/speakers', [EventSpeakerController::class, 'index']);
+Route::get('events/{event}/speakers/{speaker}', [EventSpeakerController::class, 'show']);
