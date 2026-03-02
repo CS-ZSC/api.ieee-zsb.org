@@ -22,4 +22,9 @@ class Competition extends Model
     {
         return $this->hasMany(CompetitionPrize::class);
     }
+
+    public function participants()
+    {
+        return $this->hasMany(CompetitionParticipant::class);
+    }
 }
