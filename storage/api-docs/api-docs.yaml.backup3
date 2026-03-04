@@ -1,0 +1,4335 @@
+openapi: 3.0.0
+info:
+  title: IEEE
+  version: 1.0.0
+  description: 'IEEE Backend API Documentation - Test your API routes with authentication'
+servers:
+  - url: 'http://127.0.0.1:8001'
+    description: 'Local Development Server'
+  - url: 'http://localhost:8000'
+    description: 'Alternative Local Server'
+tags:
+  - name: Dashboard
+    description: 'Backend admin routes - requires authentication and admin permissions'
+  - name: Site
+    description: 'Public frontend routes - accessible to all users'
+  - name: EventsGate
+    description: 'Visitor portal routes - for event registration and management'
+x-tagGroups:
+  - name: Dashboard (Backend Admin)
+    tags:
+      - Dashboard
+  - name: Site (Public Frontend)
+    tags:
+      - Site
+  - name: EventsGate (Visitor Portal)
+    tags:
+      - EventsGate
+paths:
+  /api/dashboard/auth/login:
+    post:
+      summary: login
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: utc-millisec
+            example:
+              email: abdallahhamada2103@gmail.com
+              password: '12345678'
+  /api/dashboard/auth/logout:
+    post:
+      summary: logout
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: utc-millisec
+            example:
+              email: john@example.com
+              password: '12345678'
+  /api/dashboard/users:
+    get:
+      summary: index
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      security:
+        - BearerAuth: []
+  /api/dashboard/users/{id}:
+    get:
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Resource ID
+      summary: show
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      security:
+        - BearerAuth: []
+    put:
+      summary: update
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                postions:
+                  type: array
+                  items:
+                    type: integer
+            example:
+              postions:
+                - 11
+                - 12
+    delete:
+      summary: delete
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                position:
+                  type: string
+                groupable_id:
+                  type: integer
+                groupable_type:
+                  type: string
+                track_id:
+                  type: integer
+                avatar_src:
+                  type: string
+                  format: uri
+                linkedin:
+                  type: string
+                  format: uri
+            example:
+              name: John Doe
+              email: john@example.com
+              position: ' vice track leader'
+              groupable_id: 1
+              groupable_type: chapter
+              track_id: 1
+              avatar_src: https://example.com/avatar.jpg
+              linkedin: https://www.linkedin.com
+  /api/dashboard/chapters/:
+    get:
+      summary: chapter.index
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+  /api/dashboard/chapters/{id}:
+    get:
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Resource ID
+      summary: chapter.show
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+  /api/dashboard/chapters:
+    post:
+      summary: chapter.create
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                short_name:
+                  type: string
+                logo:
+                  type: string
+                color_scheme_1:
+                  type: string
+                color_scheme_2:
+                  type: string
+            example:
+              name: s
+              short_name: s
+              logo: s
+              color_scheme_1: s
+              color_scheme_2: s
+    put:
+      summary: chapter.edit
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                short_name:
+                  type: string
+                logo:
+                  type: string
+                color_scheme_1:
+                  type: string
+                color_scheme_2:
+                  type: string
+            example:
+              name: cs
+              short_name: cs
+              logo: s
+              color_scheme_1: s
+              color_scheme_2: s
+    delete:
+      summary: chapter.delete
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+  /api/dashboard/tracks/:
+    get:
+      summary: track.index
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      description: 'Generated from cURL: curl --request GET ''{{base_url}}/backend/tracks/'''
+  /api/dashboard/tracks/{id}:
+    get:
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Resource ID
+      summary: track.show
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      description: 'Generated from cURL: curl --request GET ''{{base_url}}/backend/tracks/2'''
+  /api/dashboard/tracks:
+    post:
+      summary: track.create
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      description: 'Generated from cURL: curl --request POST ''{{base_url}}/backend/tracks'''
+    put:
+      summary: track.edit
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      description: 'Generated from cURL: curl --request PUT ''{{base_url}}/backend/tracks/1'''
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                hashtag:
+                  type: string
+                image:
+                  type: string
+                  format: uri
+                description:
+                  type: string
+                chapter_id:
+                  type: integer
+            example:
+              name: Updated Track Name
+              hashtag: '#updated-track'
+              image: https://example.com/image.jpg
+              description: Updated track description
+              chapter_id: 1
+    delete:
+      summary: track.delete
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      description: >-
+        Generated from cURL: curl --request DELETE
+        '{{base_url}}/backend/tracks/1'
+  /api/dashboard/committees:
+    get:
+      summary: committee.index
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      description: >-
+        Generated from cURL: curl --location '{{base_url}}/dashboard/committees'
+        --request GET
+    post:
+      summary: committee.create
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      description: >-
+        Generated from cURL: curl --location '{{base_url}}/dashboard/committees'
+        --request POST --header 'Content-Type: application/json' --data-raw
+        '{"name": "Technical Committee", "hashtag": "tech", "description":
+        "Responsible for technical activities and workshops...", "image":
+        "/Images/committees/technical.jpg"}'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                hashtag:
+                  type: string
+                description:
+                  type: string
+                image:
+                  type: string
+            example:
+              name: Technical Committee
+              hashtag: tech
+              description: Responsible for technical activities and workshops...
+              image: /Images/committees/technical.jpg
+  /api/dashboard/committees/{id}:
+    get:
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Resource ID
+      summary: committee.show
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      description: >-
+        Generated from cURL: curl --location
+        '{{base_url}}/dashboard/committees/1' --request GET
+    put:
+      summary: committee.edit
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      description: >-
+        Generated from cURL: curl --location
+        '{{base_url}}/dashboard/committees/1' --request PUT --header
+        'Content-Type: application/json' --data-raw '{"name": "Updated
+        Committee", "hashtag": "updated", "description": "Updated
+        description...", "image": "/Images/committees/updated.jpg"}'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                hashtag:
+                  type: string
+                description:
+                  type: string
+                image:
+                  type: string
+            example:
+              name: Updated Committee
+              hashtag: updated
+              description: Updated description...
+              image: /Images/committees/updated.jpg
+    delete:
+      summary: committee.delete
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      description: >-
+        Generated from cURL: curl --location
+        '{{base_url}}/dashboard/committees/1' --request DELETE
+  /api/dashboard/goals:
+    get:
+      summary: goal.index
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      description: >-
+        Generated from cURL: curl --location '{{base_url}}/dashboard/goals'
+        --request GET
+    post:
+      summary: goal.create
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      description: >-
+        Generated from cURL: curl --location '{{base_url}}/dashboard/goals'
+        --request POST --header 'Content-Type: application/json' --data-raw
+        '{"goal": "Master JavaScript fundamentals and modern ES6+ features",
+        "goalable_id": 1, "goalable_type": "track"}'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                goal:
+                  type: string
+                goalable_id:
+                  type: integer
+                goalable_type:
+                  type: string
+            example:
+              goal: Master JavaScript fundamentals and modern ES6+ features
+              goalable_id: 1
+              goalable_type: track
+  /api/dashboard/goals/{id}:
+    get:
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Resource ID
+      summary: goal.show
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      description: >-
+        Generated from cURL: curl --location '{{base_url}}/dashboard/goals/1'
+        --request GET
+    put:
+      summary: goal.edit
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      description: >-
+        Generated from cURL: curl --location '{{base_url}}/dashboard/goals/1'
+        --request PUT --header 'Content-Type: application/json' --data-raw
+        '{"goal": "Master JavaScript fundamentals and modern ES6+ features",
+        "goalable_id": 1, "goalable_type": "track"}'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                goal:
+                  type: string
+                goalable_id:
+                  type: integer
+                goalable_type:
+                  type: string
+            example:
+              goal: Master JavaScript fundamentals and modern ES6+ features
+              goalable_id: 1
+              goalable_type: track
+    delete:
+      summary: goal.delete
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      description: >-
+        Generated from cURL: curl --location '{{base_url}}/dashboard/goals/1'
+        --request DELETE
+  /api/dashboard/activities:
+    get:
+      summary: activity.index
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      description: >-
+        Generated from cURL: curl --location '{{base_url}}/dashboard/activities'
+        --request GET
+    post:
+      summary: activity.create
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      description: >-
+        Generated from cURL: curl --location '{{base_url}}/dashboard/activities'
+        --request POST --header 'Content-Type: application/json' --data
+        '{"title":"Soft Skills Sessions","description":"Training on
+        communication, presentation, leadership, and other key
+        skills...","activityable_id":1,"activityable_type":"track"}'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                activityable_id:
+                  type: integer
+                activityable_type:
+                  type: string
+            example:
+              title: Soft Skills Sessions
+              description: >-
+                Training on communication, presentation, leadership, and other
+                key skills...
+              activityable_id: 1
+              activityable_type: track
+  /api/dashboard/activities/{id}:
+    get:
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Resource ID
+      summary: activity.show
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      description: >-
+        Generated from cURL: curl --location
+        '{{base_url}}/dashboard/activities/1' --request GET
+    put:
+      summary: activity.edit
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      description: >-
+        Generated from cURL: curl --location
+        '{{base_url}}/dashboard/activities/1' --request PUT --header
+        'Content-Type: application/json' --data '{"title":"Soft Skills
+        Sessions","description":"Training on communication, presentation,
+        leadership, and other key
+        skills...","activityable_id":1,"activityable_type":"track"}'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                activityable_id:
+                  type: integer
+                activityable_type:
+                  type: string
+            example:
+              title: Soft Skills Sessions
+              description: >-
+                Training on communication, presentation, leadership, and other
+                key skills...
+              activityable_id: 1
+              activityable_type: track
+    delete:
+      summary: activity.delete
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      description: >-
+        Generated from cURL: curl --location
+        '{{base_url}}/dashboard/activities/1' --request DELETE
+  /api/dashboard/news:
+    get:
+      summary: index
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+    post:
+      summary: create
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                date_created:
+                  type: string
+                  format: date
+                author:
+                  type: string
+                home_item:
+                  type: boolean
+                tags:
+                  type: array
+                  items:
+                    type: string
+                main_photo:
+                  type: string
+                sections:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      heading:
+                        type: string
+                      descriptions:
+                        type: array
+                        items:
+                          type: string
+                      photo:
+                        type: string
+                      photo_description:
+                        type: string
+            example:
+              title: IEEE Workshop Success
+              description: Main description of the news article
+              date_created: '2024-02-19'
+              author: John Doe
+              home_item: true
+              tags:
+                - workshop
+                - ieee
+                - success
+              main_photo: /Images/news/workshop.jpg
+              sections:
+                - heading: Workshop Overview
+                  descriptions:
+                    - First paragraph description
+                    - Second paragraph description
+                  photo: /Images/news/section1.jpg
+                  photo_description: Workshop participants
+                - heading: Key Takeaways
+                  descriptions:
+                    - Important points from the workshop
+                  photo: /Images/news/section2.jpg
+                  photo_description: Presentation slides
+  /api/dashboard/news/{id}:
+    put:
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Resource ID
+      summary: edit
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                date_created:
+                  type: string
+                  format: date
+                author:
+                  type: string
+                home_item:
+                  type: boolean
+                tags:
+                  type: array
+                  items:
+                    type: string
+                main_photo:
+                  type: string
+                sections:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      heading:
+                        type: string
+                      descriptions:
+                        type: array
+                        items:
+                          type: string
+                      photo:
+                        type: string
+                      photo_description:
+                        type: string
+            example:
+              title: Updated Title
+              description: Updated description
+              date_created: '2024-02-19'
+              author: Updated Author
+              home_item: false
+              tags:
+                - updated
+                - news
+              main_photo: /Images/news/updated.jpg
+              sections:
+                - heading: New Section Heading
+                  descriptions:
+                    - Updated content
+                  photo: /Images/news/new_section.jpg
+                  photo_description: New section image
+    delete:
+      summary: delete
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+  /api/dashboard/seasons:
+    get:
+      summary: seasons
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+    post:
+      summary: create
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                year:
+                  type: string
+                  format: utc-millisec
+                chapter_id:
+                  type: integer
+            example:
+              year: '2024'
+              chapter_id: 1
+  /api/dashboard/seasons/{id}:
+    get:
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Resource ID
+      summary: show
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+    put:
+      summary: edit
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                year:
+                  type: string
+                  format: utc-millisec
+                chapter_id:
+                  type: integer
+            example:
+              year: '2025'
+              chapter_id: 2
+    delete:
+      summary: delete
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+  /api/dashboard/summaries:
+    get:
+      summary: index
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+    post:
+      summary: create
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                summary_text:
+                  type: string
+                season_id:
+                  type: integer
+            example:
+              summary_text: >-
+                This season was highly successful with multiple workshops and
+                events. We achieved our goals of increasing member engagement
+                and technical skill development.
+              season_id: 1
+  /api/dashboard/summaries/{id}:
+    get:
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Resource ID
+      summary: show
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+    put:
+      summary: edit
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                summary_text:
+                  type: string
+                season_id:
+                  type: integer
+            example:
+              summary_text: Updated summary text for the season
+              season_id: 2
+    delete:
+      summary: delete
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+  /api/dashboard/positions:
+    get:
+      summary: index
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      security:
+        - BearerAuth: []
+    post:
+      summary: create
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+            example:
+              name: Technical Lead
+  /api/dashboard/positions/{id}:
+    get:
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Resource ID
+      summary: show
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      security:
+        - BearerAuth: []
+    put:
+      summary: edit
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                role_id:
+                  type: integer
+            example:
+              role_id: 10
+    delete:
+      summary: delete
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      security:
+        - BearerAuth: []
+  /api/dashboard/roles:
+    get:
+      summary: index
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      security:
+        - BearerAuth: []
+    post:
+      summary: create
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                scope_type:
+                  type: string
+            example:
+              name: Dev
+              scope_type: global
+  /:
+    get:
+      summary: show
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+  /api/dashboard/roles/{id}:
+    put:
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Resource ID
+      summary: edit
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                scope_type:
+                  type: string
+                permissions:
+                  type: array
+                  items:
+                    type: integer
+            example:
+              name: Dev
+              scope_type: global
+              permissions:
+                - 1
+                - 2
+                - 3
+                - 4
+                - 5
+                - 6
+                - 7
+                - 8
+                - 9
+                - 10
+                - 11
+                - 12
+                - 13
+                - 14
+                - 15
+                - 16
+                - 17
+                - 18
+                - 19
+                - 20
+                - 21
+                - 22
+                - 23
+                - 24
+                - 25
+                - 26
+                - 27
+  /api/dashboard/permissions:
+    get:
+      summary: index
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      security:
+        - BearerAuth: []
+    post:
+      summary: create
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+            example:
+              name: manage website
+  /api/dashboard/permissions/{id}:
+    get:
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Resource ID
+      summary: show
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+    put:
+      summary: edit
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+            example:
+              name: manage website
+    delete:
+      summary: delete
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+  /api/dashboard/events:
+    get:
+      summary: index
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      security:
+        - BearerAuth: []
+    post:
+      summary: create
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                name:
+                  type: string
+                slug:
+                  type: string
+                overview:
+                  type: string
+                description:
+                  type: string
+                logo:
+                  nullable: true
+                cover_image:
+                  nullable: true
+                start_date:
+                  type: string
+                  format: date-time
+                end_date:
+                  type: string
+                  format: date-time
+                location:
+                  type: string
+                status:
+                  type: string
+                created_at:
+                  type: string
+                  format: date-time
+                updated_at:
+                  type: string
+                  format: date-time
+                images:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      event_id:
+                        type: integer
+                      image_path:
+                        type: string
+                      created_at:
+                        type: string
+                        format: date-time
+                      updated_at:
+                        type: string
+                        format: date-time
+            example:
+              id: 1
+              name: Tech Summit 2024
+              slug: tech-summit-20242
+              overview: Annual technology summit
+              description: A comprehensive tech summit covering latest innovations
+              logo: null
+              cover_image: null
+              start_date: '2024-12-01T09:00:00.000000Z'
+              end_date: '2024-12-03T18:00:00.000000Z'
+              location: Riyadh Tech Hub
+              status: upcoming
+              created_at: '2026-02-21T22:50:16.000000Z'
+              updated_at: '2026-02-21T22:50:16.000000Z'
+              images:
+                - id: 1
+                  event_id: 1
+                  image_path: events/tech-summit-2024/cover.jpg
+                  created_at: '2026-02-21T22:50:29.000000Z'
+                  updated_at: '2026-02-21T22:50:29.000000Z'
+                - id: 2
+                  event_id: 1
+                  image_path: events/tech-summit-2024/gallery1.jpg
+                  created_at: '2026-02-21T22:50:29.000000Z'
+                  updated_at: '2026-02-21T22:50:29.000000Z'
+                - id: 3
+                  event_id: 1
+                  image_path: events/tech-summit-2024/gallery2.jpg
+                  created_at: '2026-02-21T22:50:29.000000Z'
+                  updated_at: '2026-02-21T22:50:29.000000Z'
+  /api/dashboard/events/{event}:
+    get:
+      parameters:
+        - name: event
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Event identifier
+      summary: show
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      security:
+        - BearerAuth: []
+    put:
+      summary: update
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                name:
+                  type: string
+                slug:
+                  type: string
+                overview:
+                  type: string
+                description:
+                  type: string
+                logo:
+                  nullable: true
+                cover_image:
+                  nullable: true
+                start_date:
+                  type: string
+                  format: date-time
+                end_date:
+                  type: string
+                  format: date-time
+                location:
+                  type: string
+                status:
+                  type: string
+                created_at:
+                  type: string
+                  format: date-time
+                updated_at:
+                  type: string
+                  format: date-time
+                images:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      event_id:
+                        type: integer
+                      image_path:
+                        type: string
+                      created_at:
+                        type: string
+                        format: date-time
+                      updated_at:
+                        type: string
+                        format: date-time
+            example:
+              id: 1
+              name: Tech Summit 2024
+              slug: tech-summit-20242
+              overview: Annual technology summit
+              description: A comprehensive tech summit covering latest innovations
+              logo: null
+              cover_image: null
+              start_date: '2024-12-01T09:00:00.000000Z'
+              end_date: '2024-12-03T18:00:00.000000Z'
+              location: Riyadh Tech Hub
+              status: upcoming
+              created_at: '2026-02-21T22:50:16.000000Z'
+              updated_at: '2026-02-21T22:50:16.000000Z'
+              images:
+                - id: 1
+                  event_id: 1
+                  image_path: events/tech-summit-2024/cover.jpg
+                  created_at: '2026-02-21T22:50:29.000000Z'
+                  updated_at: '2026-02-21T22:50:29.000000Z'
+                - id: 2
+                  event_id: 1
+                  image_path: events/tech-summit-2024/gallery1.jpg
+                  created_at: '2026-02-21T22:50:29.000000Z'
+                  updated_at: '2026-02-21T22:50:29.000000Z'
+                - id: 3
+                  event_id: 1
+                  image_path: events/tech-summit-2024/gallery2.jpg
+                  created_at: '2026-02-21T22:50:29.000000Z'
+                  updated_at: '2026-02-21T22:50:29.000000Z'
+    delete:
+      summary: delete
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                name:
+                  type: string
+                slug:
+                  type: string
+                overview:
+                  type: string
+                description:
+                  type: string
+                logo:
+                  nullable: true
+                cover_image:
+                  nullable: true
+                start_date:
+                  type: string
+                  format: date-time
+                end_date:
+                  type: string
+                  format: date-time
+                location:
+                  type: string
+                status:
+                  type: string
+                created_at:
+                  type: string
+                  format: date-time
+                updated_at:
+                  type: string
+                  format: date-time
+                images:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      event_id:
+                        type: integer
+                      image_path:
+                        type: string
+                      created_at:
+                        type: string
+                        format: date-time
+                      updated_at:
+                        type: string
+                        format: date-time
+            example:
+              id: 1
+              name: Tech Summit 2024
+              slug: tech-summit-20242
+              overview: Annual technology summit
+              description: A comprehensive tech summit covering latest innovations
+              logo: null
+              cover_image: null
+              start_date: '2024-12-01T09:00:00.000000Z'
+              end_date: '2024-12-03T18:00:00.000000Z'
+              location: Riyadh Tech Hub
+              status: upcoming
+              created_at: '2026-02-21T22:50:16.000000Z'
+              updated_at: '2026-02-21T22:50:16.000000Z'
+              images:
+                - id: 1
+                  event_id: 1
+                  image_path: events/tech-summit-2024/cover.jpg
+                  created_at: '2026-02-21T22:50:29.000000Z'
+                  updated_at: '2026-02-21T22:50:29.000000Z'
+                - id: 2
+                  event_id: 1
+                  image_path: events/tech-summit-2024/gallery1.jpg
+                  created_at: '2026-02-21T22:50:29.000000Z'
+                  updated_at: '2026-02-21T22:50:29.000000Z'
+                - id: 3
+                  event_id: 1
+                  image_path: events/tech-summit-2024/gallery2.jpg
+                  created_at: '2026-02-21T22:50:29.000000Z'
+                  updated_at: '2026-02-21T22:50:29.000000Z'
+  /api/dashboard/events/{event}/images:
+    get:
+      parameters:
+        - name: event
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Event identifier
+      summary: index
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      security:
+        - BearerAuth: []
+    post:
+      summary: create
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      security:
+        - BearerAuth: []
+  /api/dashboard/events/{event}/images/{id}:
+    delete:
+      parameters:
+        - name: event
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Event identifier
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Resource ID
+      summary: delete
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      security:
+        - BearerAuth: []
+  /api/dashboard/competitions:
+    get:
+      summary: index
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      security:
+        - BearerAuth: []
+    post:
+      summary: create
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                event_id:
+                  type: integer
+                chapter_id:
+                  type: integer
+                name:
+                  type: string
+                overview:
+                  type: string
+                type:
+                  type: string
+                max_team_members:
+                  type: integer
+            example:
+              event_id: 1
+              chapter_id: 1
+              name: Programming Competition 2024
+              overview: Annual programming competition for students
+              type: team
+              max_team_members: 4
+  /api/dashboard/competitions/{id}:
+    get:
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Resource ID
+      summary: show
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      security:
+        - BearerAuth: []
+    put:
+      summary: edit
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                event_id:
+                  type: integer
+                chapter_id:
+                  type: integer
+                name:
+                  type: string
+                overview:
+                  type: string
+                type:
+                  type: string
+                max_team_members:
+                  type: integer
+            example:
+              event_id: 1
+              chapter_id: 1
+              name: Programming Competition 2024
+              overview: Annual programming competition for students
+              type: team
+              max_team_members: 3
+    delete:
+      summary: delete
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                event_id:
+                  type: integer
+                chapter_id:
+                  type: integer
+                name:
+                  type: string
+                overview:
+                  type: string
+                type:
+                  type: string
+                max_team_members:
+                  type: integer
+            example:
+              event_id: 1
+              chapter_id: 1
+              name: Programming Competition 2024
+              overview: Annual programming competition for students
+              type: team
+              max_team_members: 3
+  /api/dashboard/competitions/2/prizes:
+    get:
+      summary: index
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+    post:
+      summary: craete
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      security:
+        - BearerAuth: []
+  /api/dashboard/competitions/2/prizes/{id}:
+    put:
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Resource ID
+      summary: edit
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                rank:
+                  type: integer
+                prize_description:
+                  type: string
+            example:
+              title: First Place Prize
+              rank: 1
+              prize_description: Gold medal + $1500 cash prize
+  /api/dashboard/competitions/2/prizes/{id}:
+    delete:
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Resource ID
+      summary: delete
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                rank:
+                  type: integer
+                prize_description:
+                  type: string
+            example:
+              title: First Place Prize
+              rank: 1
+              prize_description: Gold medal + $1500 cash prize
+  /api/dashboard/events/{event}/participants:
+    get:
+      parameters:
+        - name: event
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Event identifier
+      summary: index
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      security:
+        - BearerAuth: []
+    post:
+      summary: create
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: integer
+                role:
+                  type: string
+            example:
+              user_id: 5
+              role: competitor
+  /api/dashboard/events/{event}/participants/{id}:
+    delete:
+      parameters:
+        - name: event
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Event identifier
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Resource ID
+      summary: delete
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: integer
+                role:
+                  type: string
+            example:
+              user_id: 5
+              role: competitor
+  /api/dashboard/events/{event}/speakers:
+    get:
+      parameters:
+        - name: event
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Event identifier
+      summary: index
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      security:
+        - BearerAuth: []
+    post:
+      summary: create
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      security:
+        - BearerAuth: []
+  /api/dashboard/events/{event}/speakers/{id}:
+    get:
+      parameters:
+        - name: event
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Event identifier
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Resource ID
+      summary: show
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      security:
+        - BearerAuth: []
+  /api/dashboard/events/{event}/speakers/{id}:
+    post:
+      parameters:
+        - name: event
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Event identifier
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Resource ID
+      summary: update
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      security:
+        - BearerAuth: []
+    delete:
+      summary: delete
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      security:
+        - BearerAuth: []
+  /api/dashboard/events/{event}/sponsors:
+    get:
+      parameters:
+        - name: event
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Event identifier
+      summary: index
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      security:
+        - BearerAuth: []
+    post:
+      summary: create
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      security:
+        - BearerAuth: []
+  /api/dashboard/events/{event}/sponsors/{id}:
+    get:
+      parameters:
+        - name: event
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Event identifier
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Resource ID
+      summary: show
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      security:
+        - BearerAuth: []
+    post:
+      summary: update
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      security:
+        - BearerAuth: []
+    delete:
+      summary: delete
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      security:
+        - BearerAuth: []
+  /api/dashboard/competitions/2/participants:
+    get:
+      summary: index
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      security:
+        - BearerAuth: []
+    post:
+      summary: create
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                event_participant_id:
+                  type: integer
+            example:
+              event_participant_id: 3
+  /api/dashboard/competitions/2/participants/{id}:
+    get:
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Resource ID
+      summary: show
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      security:
+        - BearerAuth: []
+    delete:
+      summary: delete
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Dashboard
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                event_participant_id:
+                  type: integer
+            example:
+              event_participant_id: 3
+  /api/site/register:
+    post:
+      summary: register
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Site
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: utc-millisec
+                password_confirmation:
+                  type: string
+                  format: utc-millisec
+            example:
+              name: John Doe
+              email: john@example.com
+              password: '12345678'
+              password_confirmation: '12345678'
+  /login:
+    post:
+      summary: login
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Site
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: utc-millisec
+            example:
+              email: john@example.com
+              password: '12345678'
+  /logout:
+    post:
+      summary: logout
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Site
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: utc-millisec
+            example:
+              email: john@example.com
+              password: '12345678'
+  /api/site/updatemyprofile:
+    post:
+      summary: profile.update
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Site
+      security:
+        - BearerAuth: []
+  /api/site/chapters/:
+    get:
+      summary: chapter.index
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Site
+  /api/site/chapters/{id}:
+    get:
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Resource ID
+      summary: chapter.show
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Site
+  /api/site/tracks/{id}:
+    get:
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Resource ID
+      summary: track.show
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Site
+      description: 'Generated from cURL: curl --request GET ''{{base_url}}/backend/tracks/2'''
+  /api/site/committees:
+    get:
+      summary: committee.index
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Site
+      description: >-
+        Generated from cURL: curl --location '{{base_url}}/dashboard/committees'
+        --request GET
+  /api/site/committees/{id}:
+    get:
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Resource ID
+      summary: committee.show
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Site
+      description: >-
+        Generated from cURL: curl --location
+        '{{base_url}}/dashboard/committees/1' --request GET
+  /api/site/activities:
+    get:
+      summary: activity.index
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Site
+      description: >-
+        Generated from cURL: curl --location '{{base_url}}/dashboard/activities'
+        --request GET
+  /api/site/activities/{id}:
+    get:
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Resource ID
+      summary: activity.show
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Site
+      description: >-
+        Generated from cURL: curl --location
+        '{{base_url}}/dashboard/activities/1' --request GET
+  /api/site/news:
+    get:
+      summary: index
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Site
+  /api/site/news/{id}:
+    get:
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Resource ID
+      summary: show
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Site
+  /api/site/seasons:
+    get:
+      summary: seasons
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Site
+  /api/site/seasons/{id}:
+    get:
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Resource ID
+      summary: show
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Site
+  /api/site/summaries:
+    get:
+      summary: index
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Site
+  /api/site/summaries/{id}:
+    get:
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Resource ID
+      summary: show
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Site
+  /api/site/events:
+    get:
+      summary: index
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Site
+      security:
+        - BearerAuth: []
+  /api/site/events/{event}:
+    get:
+      parameters:
+        - name: event
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Event identifier
+      summary: show
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Site
+      security:
+        - BearerAuth: []
+  /api/site/events/{event}/images:
+    get:
+      parameters:
+        - name: event
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Event identifier
+      summary: index
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Site
+      security:
+        - BearerAuth: []
+  /api/site/competitions:
+    get:
+      summary: index
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Site
+      security:
+        - BearerAuth: []
+  /api/site/competitions/{id}:
+    get:
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Resource ID
+      summary: show
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Site
+      security:
+        - BearerAuth: []
+  /api/site/competitions/2/prizes:
+    get:
+      summary: index
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Site
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+  /api/site/events/{event}/participants:
+    get:
+      parameters:
+        - name: event
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Event identifier
+      summary: index
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Site
+      security:
+        - BearerAuth: []
+  /api/site/events/{event}/speakers:
+    get:
+      parameters:
+        - name: event
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Event identifier
+      summary: index
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Site
+      security:
+        - BearerAuth: []
+  /api/site/events/{event}/speakers/{id}:
+    get:
+      parameters:
+        - name: event
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Event identifier
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Resource ID
+      summary: show
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Site
+      security:
+        - BearerAuth: []
+  /api/site/events/{event}/sponsors:
+    get:
+      parameters:
+        - name: event
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Event identifier
+      summary: index
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Site
+      security:
+        - BearerAuth: []
+  /api/site/events/{event}/sponsors/{id}:
+    get:
+      parameters:
+        - name: event
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Event identifier
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Resource ID
+      summary: show
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - Site
+      security:
+        - BearerAuth: []
+  /api/eventsgate/register:
+    post:
+      summary: register
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - EventsGate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: utc-millisec
+                password_confirmation:
+                  type: string
+                  format: utc-millisec
+                phone_number:
+                  type: string
+                  format: utc-millisec
+                national_id:
+                  type: string
+                  format: utc-millisec
+            example:
+              name: John Doe
+              email: john@example.com
+              password: '12345678'
+              password_confirmation: '12345678'
+              phone_number: '123456789'
+              national_id: '1111111111'
+  /api/eventsgate/login:
+    post:
+      summary: login
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - EventsGate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: utc-millisec
+            example:
+              email: john@example.com
+              password: '12345678'
+  /api/eventsgate/logout:
+    post:
+      summary: logout
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - EventsGate
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: utc-millisec
+            example:
+              email: john@example.com
+              password: '12345678'
+  /api/eventsgate/verify-registration:
+    post:
+      summary: verifyRegisterEmail
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - EventsGate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                verification_code:
+                  type: string
+                  format: color
+            example:
+              email: john@example.com
+              verification_code: '918540'
+  /api/eventsgate/send-password-reset-code:
+    post:
+      summary: sendcodeResetPassword
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - EventsGate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+            example:
+              email: john@example.com
+  /api/eventsgate/reset-password:
+    post:
+      summary: resetPassword
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - EventsGate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                verification_code:
+                  type: string
+                  format: color
+                password:
+                  type: string
+                  format: utc-millisec
+                password_confirmation:
+                  type: string
+                  format: utc-millisec
+            example:
+              email: john@example.com
+              verification_code: '555421'
+              password: '12345678'
+              password_confirmation: '12345678'
+  /api/eventsgate/events:
+    get:
+      summary: index
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - EventsGate
+      security:
+        - BearerAuth: []
+  /api/eventsgate/events/{event}:
+    get:
+      parameters:
+        - name: event
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Event identifier
+      summary: show
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - EventsGate
+      security:
+        - BearerAuth: []
+  /api/eventsgate/events/{event}/images:
+    get:
+      parameters:
+        - name: event
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Event identifier
+      summary: index
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - EventsGate
+      security:
+        - BearerAuth: []
+  /api/eventsgate/competitions:
+    get:
+      summary: index
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - EventsGate
+      security:
+        - BearerAuth: []
+  /api/eventsgate/competitions/{id}:
+    get:
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Resource ID
+      summary: show
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - EventsGate
+      security:
+        - BearerAuth: []
+  /api/eventsgate/competitions/2/prizes:
+    get:
+      summary: index
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - EventsGate
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+  /api/eventsgate/events/{event}/register:
+    post:
+      parameters:
+        - name: event
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Event identifier
+      summary: registerToEvent
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - EventsGate
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                role:
+                  type: string
+            example:
+              role: competitor
+  /api/eventsgate/events/{event}/unregister:
+    delete:
+      parameters:
+        - name: event
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Event identifier
+      summary: unregister ToEvent
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - EventsGate
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                role:
+                  type: string
+            example:
+              role: competitor
+  /api/eventsgate/events/{event}/speakers:
+    get:
+      parameters:
+        - name: event
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Event identifier
+      summary: index
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - EventsGate
+      security:
+        - BearerAuth: []
+  /api/eventsgate/events/{event}/speakers/{id}:
+    get:
+      parameters:
+        - name: event
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Event identifier
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Resource ID
+      summary: show
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - EventsGate
+      security:
+        - BearerAuth: []
+  /api/eventsgate/events/{event}/sponsors:
+    get:
+      parameters:
+        - name: event
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Event identifier
+      summary: index
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - EventsGate
+      security:
+        - BearerAuth: []
+  /api/eventsgate/events/{event}/sponsors/{id}:
+    get:
+      parameters:
+        - name: event
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Event identifier
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Resource ID
+      summary: show
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - EventsGate
+      security:
+        - BearerAuth: []
+  /api/eventsgate/competitions/{competition}/register:
+    post:
+      parameters:
+        - name: competition
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Competition identifier
+      summary: competitionRegister
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - EventsGate
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                event_participant_id:
+                  type: integer
+            example:
+              event_participant_id: 1
+  /api/eventsgate/competitions/{competition}/unregister:
+    delete:
+      parameters:
+        - name: competition
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Competition identifier
+      summary: competitionUnregister
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      tags:
+        - EventsGate
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                event_participant_id:
+                  type: integer
+            example:
+              event_participant_id: 1
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: 'Enter your Bearer token from login response (Example: 1|abc123...)'

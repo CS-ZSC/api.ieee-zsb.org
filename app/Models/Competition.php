@@ -18,6 +18,16 @@ class Competition extends Model
         'max_team_members',
     ];
 
+    public function event()
+    {
+        return $this->belongsTo(Event::class);
+    }
+
+    public function chapter()
+    {
+        return $this->belongsTo(Chapter::class);
+    }
+
     public function prizes()
     {
         return $this->hasMany(CompetitionPrize::class);

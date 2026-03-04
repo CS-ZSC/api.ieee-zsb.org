@@ -41,4 +41,9 @@ class CompetitionPolicy
     {
         return $user->hasPermission('manage competition prizes');
     }
+
+    public function manageParticipants(User $user)
+    {
+        return $user->hasPermission('manage competition participants');
+    }
 }

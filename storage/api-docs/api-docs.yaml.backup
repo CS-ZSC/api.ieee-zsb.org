@@ -1,0 +1,2418 @@
+openapi: 3.0.0
+info:
+  title: IEEE
+  version: 1.0.0
+  description: 'IEEE Backend API Documentation organized into 3 main sections'
+servers:
+  - url: '{{baseURL}}'
+  - url: '{{base_url}}'
+  - url: ''
+  - url: '{{base_url}}site'
+tags:
+  - name: Dashboard
+    description: 'Backend admin routes - requires authentication and admin permissions'
+  - name: Site
+    description: 'Public frontend routes - accessible to all users'
+  - name: EventsGate
+    description: 'Visitor portal routes - for event registration and management'
+x-tagGroups:
+  - name: Dashboard (Backend Admin)
+    tags:
+      - Dashboard
+  - name: Site (Public Frontend)
+    tags:
+      - Site
+  - name: EventsGate (Visitor Portal)
+    tags:
+      - EventsGate
+paths:
+  /api/dashboard/auth/login:
+    post:
+      summary: login
+      responses: {}
+      tags:
+        - dashboard
+        - auth
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: utc-millisec
+            example:
+              email: abdallahhamada2103@gmail.com
+              password: '12345678'
+  /api/dashboard/auth/logout:
+    post:
+      summary: logout
+      responses: {}
+      tags:
+        - dashboard
+        - auth
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: utc-millisec
+            example:
+              email: john@example.com
+              password: '12345678'
+  /api/dashboard/users:
+    get:
+      summary: index
+      responses: {}
+      tags:
+        - dashboard
+        - users
+      security:
+        - BearerAuth: []
+  /api/dashboard/users/1:
+    get:
+      summary: show
+      responses: {}
+      tags:
+        - dashboard
+        - users
+      security:
+        - BearerAuth: []
+  /api/dashboard/users/18:
+    put:
+      summary: update
+      responses: {}
+      tags:
+        - dashboard
+        - users
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                postions:
+                  type: array
+                  items:
+                    type: integer
+            example:
+              postions:
+                - 11
+                - 12
+  /api/dashboard/users/2:
+    delete:
+      summary: delete
+      responses: {}
+      tags:
+        - dashboard
+        - users
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                position:
+                  type: string
+                groupable_id:
+                  type: integer
+                groupable_type:
+                  type: string
+                track_id:
+                  type: integer
+                avatar_src:
+                  type: string
+                  format: uri
+                linkedin:
+                  type: string
+                  format: uri
+            example:
+              name: John Doe
+              email: john@example.com
+              position: ' vice track leader'
+              groupable_id: 1
+              groupable_type: chapter
+              track_id: 1
+              avatar_src: https://example.com/avatar.jpg
+              linkedin: https://www.linkedin.com
+  /dashboard/chapters/:
+    get:
+      summary: chapter.index
+      responses: {}
+      tags:
+        - dashboard
+        - chapter
+  /dashboard/chapters/2:
+    get:
+      summary: chapter.show
+      responses: {}
+      tags:
+        - dashboard
+        - chapter
+  /dashboard/chapters:
+    post:
+      summary: chapter.create
+      responses: {}
+      tags:
+        - dashboard
+        - chapter
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                short_name:
+                  type: string
+                logo:
+                  type: string
+                color_scheme_1:
+                  type: string
+                color_scheme_2:
+                  type: string
+            example:
+              name: s
+              short_name: s
+              logo: s
+              color_scheme_1: s
+              color_scheme_2: s
+  /dashboard/chapters/1:
+    put:
+      summary: chapter.edit
+      responses: {}
+      tags:
+        - dashboard
+        - chapter
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                short_name:
+                  type: string
+                logo:
+                  type: string
+                color_scheme_1:
+                  type: string
+                color_scheme_2:
+                  type: string
+            example:
+              name: cs
+              short_name: cs
+              logo: s
+              color_scheme_1: s
+              color_scheme_2: s
+  /dashboard/chapters/8:
+    delete:
+      summary: chapter.delete
+      responses: {}
+      tags:
+        - dashboard
+        - chapter
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+  /dashboard/tracks/:
+    get:
+      summary: track.index
+      responses: {}
+      tags:
+        - dashboard
+        - track
+      description: 'Generated from cURL: curl --request GET ''{{base_url}}/backend/tracks/'''
+  /dashboard/tracks/2:
+    get:
+      summary: track.show
+      responses: {}
+      tags:
+        - dashboard
+        - track
+      description: 'Generated from cURL: curl --request GET ''{{base_url}}/backend/tracks/2'''
+  /dashboard/tracks:
+    post:
+      summary: track.create
+      responses: {}
+      tags:
+        - dashboard
+        - track
+      description: 'Generated from cURL: curl --request POST ''{{base_url}}/backend/tracks'''
+  /dashboard/tracks/1:
+    put:
+      summary: track.edit
+      responses: {}
+      tags:
+        - dashboard
+        - track
+      description: 'Generated from cURL: curl --request PUT ''{{base_url}}/backend/tracks/1'''
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                hashtag:
+                  type: string
+                image:
+                  type: string
+                  format: uri
+                description:
+                  type: string
+                chapter_id:
+                  type: integer
+            example:
+              name: Updated Track Name
+              hashtag: '#updated-track'
+              image: https://example.com/image.jpg
+              description: Updated track description
+              chapter_id: 1
+    delete:
+      summary: track.delete
+      responses: {}
+      tags:
+        - dashboard
+        - track
+      description: >-
+        Generated from cURL: curl --request DELETE
+        '{{base_url}}/backend/tracks/1'
+  /dashboard/committees:
+    get:
+      summary: committee.index
+      responses: {}
+      tags:
+        - dashboard
+        - committee
+      description: >-
+        Generated from cURL: curl --location '{{base_url}}/dashboard/committees'
+        --request GET
+    post:
+      summary: committee.create
+      responses: {}
+      tags:
+        - dashboard
+        - committee
+      description: >-
+        Generated from cURL: curl --location '{{base_url}}/dashboard/committees'
+        --request POST --header 'Content-Type: application/json' --data-raw
+        '{"name": "Technical Committee", "hashtag": "tech", "description":
+        "Responsible for technical activities and workshops...", "image":
+        "/Images/committees/technical.jpg"}'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                hashtag:
+                  type: string
+                description:
+                  type: string
+                image:
+                  type: string
+            example:
+              name: Technical Committee
+              hashtag: tech
+              description: Responsible for technical activities and workshops...
+              image: /Images/committees/technical.jpg
+  /dashboard/committees/1:
+    get:
+      summary: committee.show
+      responses: {}
+      tags:
+        - dashboard
+        - committee
+      description: >-
+        Generated from cURL: curl --location
+        '{{base_url}}/dashboard/committees/1' --request GET
+    put:
+      summary: committee.edit
+      responses: {}
+      tags:
+        - dashboard
+        - committee
+      description: >-
+        Generated from cURL: curl --location
+        '{{base_url}}/dashboard/committees/1' --request PUT --header
+        'Content-Type: application/json' --data-raw '{"name": "Updated
+        Committee", "hashtag": "updated", "description": "Updated
+        description...", "image": "/Images/committees/updated.jpg"}'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                hashtag:
+                  type: string
+                description:
+                  type: string
+                image:
+                  type: string
+            example:
+              name: Updated Committee
+              hashtag: updated
+              description: Updated description...
+              image: /Images/committees/updated.jpg
+    delete:
+      summary: committee.delete
+      responses: {}
+      tags:
+        - dashboard
+        - committee
+      description: >-
+        Generated from cURL: curl --location
+        '{{base_url}}/dashboard/committees/1' --request DELETE
+  /dashboard/goals:
+    get:
+      summary: goal.index
+      responses: {}
+      tags:
+        - dashboard
+        - goals
+      description: >-
+        Generated from cURL: curl --location '{{base_url}}/dashboard/goals'
+        --request GET
+    post:
+      summary: goal.create
+      responses: {}
+      tags:
+        - dashboard
+        - goals
+      description: >-
+        Generated from cURL: curl --location '{{base_url}}/dashboard/goals'
+        --request POST --header 'Content-Type: application/json' --data-raw
+        '{"goal": "Master JavaScript fundamentals and modern ES6+ features",
+        "goalable_id": 1, "goalable_type": "track"}'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                goal:
+                  type: string
+                goalable_id:
+                  type: integer
+                goalable_type:
+                  type: string
+            example:
+              goal: Master JavaScript fundamentals and modern ES6+ features
+              goalable_id: 1
+              goalable_type: track
+  /dashboard/goals/1:
+    get:
+      summary: goal.show
+      responses: {}
+      tags:
+        - dashboard
+        - goals
+      description: >-
+        Generated from cURL: curl --location '{{base_url}}/dashboard/goals/1'
+        --request GET
+    put:
+      summary: goal.edit
+      responses: {}
+      tags:
+        - dashboard
+        - goals
+      description: >-
+        Generated from cURL: curl --location '{{base_url}}/dashboard/goals/1'
+        --request PUT --header 'Content-Type: application/json' --data-raw
+        '{"goal": "Master JavaScript fundamentals and modern ES6+ features",
+        "goalable_id": 1, "goalable_type": "track"}'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                goal:
+                  type: string
+                goalable_id:
+                  type: integer
+                goalable_type:
+                  type: string
+            example:
+              goal: Master JavaScript fundamentals and modern ES6+ features
+              goalable_id: 1
+              goalable_type: track
+    delete:
+      summary: goal.delete
+      responses: {}
+      tags:
+        - dashboard
+        - goals
+      description: >-
+        Generated from cURL: curl --location '{{base_url}}/dashboard/goals/1'
+        --request DELETE
+  /dashboard/activities:
+    get:
+      summary: activity.index
+      responses: {}
+      tags:
+        - dashboard
+        - activities
+      description: >-
+        Generated from cURL: curl --location '{{base_url}}/dashboard/activities'
+        --request GET
+    post:
+      summary: activity.create
+      responses: {}
+      tags:
+        - dashboard
+        - activities
+      description: >-
+        Generated from cURL: curl --location '{{base_url}}/dashboard/activities'
+        --request POST --header 'Content-Type: application/json' --data
+        '{"title":"Soft Skills Sessions","description":"Training on
+        communication, presentation, leadership, and other key
+        skills...","activityable_id":1,"activityable_type":"track"}'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                activityable_id:
+                  type: integer
+                activityable_type:
+                  type: string
+            example:
+              title: Soft Skills Sessions
+              description: >-
+                Training on communication, presentation, leadership, and other
+                key skills...
+              activityable_id: 1
+              activityable_type: track
+  /dashboard/activities/1:
+    get:
+      summary: activity.show
+      responses: {}
+      tags:
+        - dashboard
+        - activities
+      description: >-
+        Generated from cURL: curl --location
+        '{{base_url}}/dashboard/activities/1' --request GET
+    put:
+      summary: activity.edit
+      responses: {}
+      tags:
+        - dashboard
+        - activities
+      description: >-
+        Generated from cURL: curl --location
+        '{{base_url}}/dashboard/activities/1' --request PUT --header
+        'Content-Type: application/json' --data '{"title":"Soft Skills
+        Sessions","description":"Training on communication, presentation,
+        leadership, and other key
+        skills...","activityable_id":1,"activityable_type":"track"}'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                activityable_id:
+                  type: integer
+                activityable_type:
+                  type: string
+            example:
+              title: Soft Skills Sessions
+              description: >-
+                Training on communication, presentation, leadership, and other
+                key skills...
+              activityable_id: 1
+              activityable_type: track
+    delete:
+      summary: activity.delete
+      responses: {}
+      tags:
+        - dashboard
+        - activities
+      description: >-
+        Generated from cURL: curl --location
+        '{{base_url}}/dashboard/activities/1' --request DELETE
+  /dashboard/news:
+    get:
+      summary: index
+      responses: {}
+      tags:
+        - dashboard
+        - news
+    post:
+      summary: create
+      responses: {}
+      tags:
+        - dashboard
+        - news
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                date_created:
+                  type: string
+                  format: date
+                author:
+                  type: string
+                home_item:
+                  type: boolean
+                tags:
+                  type: array
+                  items:
+                    type: string
+                main_photo:
+                  type: string
+                sections:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      heading:
+                        type: string
+                      descriptions:
+                        type: array
+                        items:
+                          type: string
+                      photo:
+                        type: string
+                      photo_description:
+                        type: string
+            example:
+              title: IEEE Workshop Success
+              description: Main description of the news article
+              date_created: '2024-02-19'
+              author: John Doe
+              home_item: true
+              tags:
+                - workshop
+                - ieee
+                - success
+              main_photo: /Images/news/workshop.jpg
+              sections:
+                - heading: Workshop Overview
+                  descriptions:
+                    - First paragraph description
+                    - Second paragraph description
+                  photo: /Images/news/section1.jpg
+                  photo_description: Workshop participants
+                - heading: Key Takeaways
+                  descriptions:
+                    - Important points from the workshop
+                  photo: /Images/news/section2.jpg
+                  photo_description: Presentation slides
+  /dashboard/news/1:
+    put:
+      summary: edit
+      responses: {}
+      tags:
+        - dashboard
+        - news
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                date_created:
+                  type: string
+                  format: date
+                author:
+                  type: string
+                home_item:
+                  type: boolean
+                tags:
+                  type: array
+                  items:
+                    type: string
+                main_photo:
+                  type: string
+                sections:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      heading:
+                        type: string
+                      descriptions:
+                        type: array
+                        items:
+                          type: string
+                      photo:
+                        type: string
+                      photo_description:
+                        type: string
+            example:
+              title: Updated Title
+              description: Updated description
+              date_created: '2024-02-19'
+              author: Updated Author
+              home_item: false
+              tags:
+                - updated
+                - news
+              main_photo: /Images/news/updated.jpg
+              sections:
+                - heading: New Section Heading
+                  descriptions:
+                    - Updated content
+                  photo: /Images/news/new_section.jpg
+                  photo_description: New section image
+    delete:
+      summary: delete
+      responses: {}
+      tags:
+        - dashboard
+        - news
+  /dashboard/seasons:
+    get:
+      summary: seasons
+      responses: {}
+      tags:
+        - dashboard
+        - seasons
+    post:
+      summary: create
+      responses: {}
+      tags:
+        - dashboard
+        - seasons
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                year:
+                  type: string
+                  format: utc-millisec
+                chapter_id:
+                  type: integer
+            example:
+              year: '2024'
+              chapter_id: 1
+  /dashboard/seasons/1:
+    get:
+      summary: show
+      responses: {}
+      tags:
+        - dashboard
+        - seasons
+    put:
+      summary: edit
+      responses: {}
+      tags:
+        - dashboard
+        - seasons
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                year:
+                  type: string
+                  format: utc-millisec
+                chapter_id:
+                  type: integer
+            example:
+              year: '2025'
+              chapter_id: 2
+    delete:
+      summary: delete
+      responses: {}
+      tags:
+        - dashboard
+        - seasons
+  /dashboard/summaries:
+    get:
+      summary: index
+      responses: {}
+      tags:
+        - dashboard
+        - summaries
+    post:
+      summary: create
+      responses: {}
+      tags:
+        - dashboard
+        - summaries
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                summary_text:
+                  type: string
+                season_id:
+                  type: integer
+            example:
+              summary_text: >-
+                This season was highly successful with multiple workshops and
+                events. We achieved our goals of increasing member engagement
+                and technical skill development.
+              season_id: 1
+  /dashboard/summaries/1:
+    get:
+      summary: show
+      responses: {}
+      tags:
+        - dashboard
+        - summaries
+    put:
+      summary: edit
+      responses: {}
+      tags:
+        - dashboard
+        - summaries
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                summary_text:
+                  type: string
+                season_id:
+                  type: integer
+            example:
+              summary_text: Updated summary text for the season
+              season_id: 2
+    delete:
+      summary: delete
+      responses: {}
+      tags:
+        - dashboard
+        - summaries
+  /dashboard/positions:
+    get:
+      summary: index
+      responses: {}
+      tags:
+        - dashboard
+        - positions
+      security:
+        - BearerAuth: []
+    post:
+      summary: create
+      responses: {}
+      tags:
+        - dashboard
+        - positions
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+            example:
+              name: Technical Lead
+  /dashboard/positions/1:
+    get:
+      summary: show
+      responses: {}
+      tags:
+        - dashboard
+        - positions
+      security:
+        - BearerAuth: []
+  /dashboard/positions/13:
+    put:
+      summary: edit
+      responses: {}
+      tags:
+        - dashboard
+        - positions
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                role_id:
+                  type: integer
+            example:
+              role_id: 10
+  /dashboard/positions/12:
+    delete:
+      summary: delete
+      responses: {}
+      tags:
+        - dashboard
+        - positions
+      security:
+        - BearerAuth: []
+  /dashboard/roles:
+    get:
+      summary: index
+      responses: {}
+      tags:
+        - dashboard
+        - roles
+      security:
+        - BearerAuth: []
+    post:
+      summary: create
+      responses: {}
+      tags:
+        - dashboard
+        - roles
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                scope_type:
+                  type: string
+            example:
+              name: Dev
+              scope_type: global
+  /:
+    get:
+      summary: show
+      responses: {}
+      tags:
+        - dashboard
+        - roles
+  /dashboard/roles/9:
+    put:
+      summary: edit
+      responses: {}
+      tags:
+        - dashboard
+        - roles
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                scope_type:
+                  type: string
+                permissions:
+                  type: array
+                  items:
+                    type: integer
+            example:
+              name: Dev
+              scope_type: global
+              permissions:
+                - 1
+                - 2
+                - 3
+                - 4
+                - 5
+                - 6
+                - 7
+                - 8
+                - 9
+                - 10
+                - 11
+                - 12
+                - 13
+                - 14
+                - 15
+                - 16
+                - 17
+                - 18
+                - 19
+                - 20
+                - 21
+                - 22
+                - 23
+                - 24
+                - 25
+                - 26
+                - 27
+  /dashboard/permissions:
+    get:
+      summary: index
+      responses: {}
+      tags:
+        - dashboard
+        - permissions
+      security:
+        - BearerAuth: []
+    post:
+      summary: create
+      responses: {}
+      tags:
+        - dashboard
+        - permissions
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+            example:
+              name: manage website
+  /dashboard/permissions/1:
+    get:
+      summary: show
+      responses: {}
+      tags:
+        - dashboard
+        - permissions
+  /dashboard/permissions/20:
+    put:
+      summary: edit
+      responses: {}
+      tags:
+        - dashboard
+        - permissions
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+            example:
+              name: manage website
+    delete:
+      summary: delete
+      responses: {}
+      tags:
+        - dashboard
+        - permissions
+  /dashboard/events:
+    get:
+      summary: index
+      responses: {}
+      tags:
+        - dashboard
+        - events
+      security:
+        - BearerAuth: []
+    post:
+      summary: create
+      responses: {}
+      tags:
+        - dashboard
+        - events
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                name:
+                  type: string
+                slug:
+                  type: string
+                overview:
+                  type: string
+                description:
+                  type: string
+                logo:
+                  nullable: true
+                cover_image:
+                  nullable: true
+                start_date:
+                  type: string
+                  format: date-time
+                end_date:
+                  type: string
+                  format: date-time
+                location:
+                  type: string
+                status:
+                  type: string
+                created_at:
+                  type: string
+                  format: date-time
+                updated_at:
+                  type: string
+                  format: date-time
+                images:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      event_id:
+                        type: integer
+                      image_path:
+                        type: string
+                      created_at:
+                        type: string
+                        format: date-time
+                      updated_at:
+                        type: string
+                        format: date-time
+            example:
+              id: 1
+              name: Tech Summit 2024
+              slug: tech-summit-20242
+              overview: Annual technology summit
+              description: A comprehensive tech summit covering latest innovations
+              logo: null
+              cover_image: null
+              start_date: '2024-12-01T09:00:00.000000Z'
+              end_date: '2024-12-03T18:00:00.000000Z'
+              location: Riyadh Tech Hub
+              status: upcoming
+              created_at: '2026-02-21T22:50:16.000000Z'
+              updated_at: '2026-02-21T22:50:16.000000Z'
+              images:
+                - id: 1
+                  event_id: 1
+                  image_path: events/tech-summit-2024/cover.jpg
+                  created_at: '2026-02-21T22:50:29.000000Z'
+                  updated_at: '2026-02-21T22:50:29.000000Z'
+                - id: 2
+                  event_id: 1
+                  image_path: events/tech-summit-2024/gallery1.jpg
+                  created_at: '2026-02-21T22:50:29.000000Z'
+                  updated_at: '2026-02-21T22:50:29.000000Z'
+                - id: 3
+                  event_id: 1
+                  image_path: events/tech-summit-2024/gallery2.jpg
+                  created_at: '2026-02-21T22:50:29.000000Z'
+                  updated_at: '2026-02-21T22:50:29.000000Z'
+  /dashboard/events/tech-summit-2024:
+    get:
+      summary: show
+      responses: {}
+      tags:
+        - dashboard
+        - events
+      security:
+        - BearerAuth: []
+  /dashboard/events/tech-summit:
+    put:
+      summary: update
+      responses: {}
+      tags:
+        - dashboard
+        - events
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                name:
+                  type: string
+                slug:
+                  type: string
+                overview:
+                  type: string
+                description:
+                  type: string
+                logo:
+                  nullable: true
+                cover_image:
+                  nullable: true
+                start_date:
+                  type: string
+                  format: date-time
+                end_date:
+                  type: string
+                  format: date-time
+                location:
+                  type: string
+                status:
+                  type: string
+                created_at:
+                  type: string
+                  format: date-time
+                updated_at:
+                  type: string
+                  format: date-time
+                images:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      event_id:
+                        type: integer
+                      image_path:
+                        type: string
+                      created_at:
+                        type: string
+                        format: date-time
+                      updated_at:
+                        type: string
+                        format: date-time
+            example:
+              id: 1
+              name: Tech Summit 2024
+              slug: tech-summit-20242
+              overview: Annual technology summit
+              description: A comprehensive tech summit covering latest innovations
+              logo: null
+              cover_image: null
+              start_date: '2024-12-01T09:00:00.000000Z'
+              end_date: '2024-12-03T18:00:00.000000Z'
+              location: Riyadh Tech Hub
+              status: upcoming
+              created_at: '2026-02-21T22:50:16.000000Z'
+              updated_at: '2026-02-21T22:50:16.000000Z'
+              images:
+                - id: 1
+                  event_id: 1
+                  image_path: events/tech-summit-2024/cover.jpg
+                  created_at: '2026-02-21T22:50:29.000000Z'
+                  updated_at: '2026-02-21T22:50:29.000000Z'
+                - id: 2
+                  event_id: 1
+                  image_path: events/tech-summit-2024/gallery1.jpg
+                  created_at: '2026-02-21T22:50:29.000000Z'
+                  updated_at: '2026-02-21T22:50:29.000000Z'
+                - id: 3
+                  event_id: 1
+                  image_path: events/tech-summit-2024/gallery2.jpg
+                  created_at: '2026-02-21T22:50:29.000000Z'
+                  updated_at: '2026-02-21T22:50:29.000000Z'
+    delete:
+      summary: delete
+      responses: {}
+      tags:
+        - dashboard
+        - events
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                name:
+                  type: string
+                slug:
+                  type: string
+                overview:
+                  type: string
+                description:
+                  type: string
+                logo:
+                  nullable: true
+                cover_image:
+                  nullable: true
+                start_date:
+                  type: string
+                  format: date-time
+                end_date:
+                  type: string
+                  format: date-time
+                location:
+                  type: string
+                status:
+                  type: string
+                created_at:
+                  type: string
+                  format: date-time
+                updated_at:
+                  type: string
+                  format: date-time
+                images:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      event_id:
+                        type: integer
+                      image_path:
+                        type: string
+                      created_at:
+                        type: string
+                        format: date-time
+                      updated_at:
+                        type: string
+                        format: date-time
+            example:
+              id: 1
+              name: Tech Summit 2024
+              slug: tech-summit-20242
+              overview: Annual technology summit
+              description: A comprehensive tech summit covering latest innovations
+              logo: null
+              cover_image: null
+              start_date: '2024-12-01T09:00:00.000000Z'
+              end_date: '2024-12-03T18:00:00.000000Z'
+              location: Riyadh Tech Hub
+              status: upcoming
+              created_at: '2026-02-21T22:50:16.000000Z'
+              updated_at: '2026-02-21T22:50:16.000000Z'
+              images:
+                - id: 1
+                  event_id: 1
+                  image_path: events/tech-summit-2024/cover.jpg
+                  created_at: '2026-02-21T22:50:29.000000Z'
+                  updated_at: '2026-02-21T22:50:29.000000Z'
+                - id: 2
+                  event_id: 1
+                  image_path: events/tech-summit-2024/gallery1.jpg
+                  created_at: '2026-02-21T22:50:29.000000Z'
+                  updated_at: '2026-02-21T22:50:29.000000Z'
+                - id: 3
+                  event_id: 1
+                  image_path: events/tech-summit-2024/gallery2.jpg
+                  created_at: '2026-02-21T22:50:29.000000Z'
+                  updated_at: '2026-02-21T22:50:29.000000Z'
+  /api/dashboard/events/tech-summit-20242/images:
+    get:
+      summary: index
+      responses: {}
+      tags:
+        - dashboard
+        - eventsImages
+      security:
+        - BearerAuth: []
+    post:
+      summary: create
+      responses: {}
+      tags:
+        - dashboard
+        - eventsImages
+      security:
+        - BearerAuth: []
+  /api/dashboard/events/tech-summit-20242/images/5:
+    delete:
+      summary: delete
+      responses: {}
+      tags:
+        - dashboard
+        - eventsImages
+      security:
+        - BearerAuth: []
+  /dashboard/competitions:
+    get:
+      summary: index
+      responses: {}
+      tags:
+        - dashboard
+        - competitions
+      security:
+        - BearerAuth: []
+    post:
+      summary: create
+      responses: {}
+      tags:
+        - dashboard
+        - competitions
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                event_id:
+                  type: integer
+                chapter_id:
+                  type: integer
+                name:
+                  type: string
+                overview:
+                  type: string
+                type:
+                  type: string
+                max_team_members:
+                  type: integer
+            example:
+              event_id: 1
+              chapter_id: 1
+              name: Programming Competition 2024
+              overview: Annual programming competition for students
+              type: team
+              max_team_members: 4
+  /dashboard/competitions/1:
+    get:
+      summary: show
+      responses: {}
+      tags:
+        - dashboard
+        - competitions
+      security:
+        - BearerAuth: []
+    put:
+      summary: edit
+      responses: {}
+      tags:
+        - dashboard
+        - competitions
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                event_id:
+                  type: integer
+                chapter_id:
+                  type: integer
+                name:
+                  type: string
+                overview:
+                  type: string
+                type:
+                  type: string
+                max_team_members:
+                  type: integer
+            example:
+              event_id: 1
+              chapter_id: 1
+              name: Programming Competition 2024
+              overview: Annual programming competition for students
+              type: team
+              max_team_members: 3
+    delete:
+      summary: delete
+      responses: {}
+      tags:
+        - dashboard
+        - competitions
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                event_id:
+                  type: integer
+                chapter_id:
+                  type: integer
+                name:
+                  type: string
+                overview:
+                  type: string
+                type:
+                  type: string
+                max_team_members:
+                  type: integer
+            example:
+              event_id: 1
+              chapter_id: 1
+              name: Programming Competition 2024
+              overview: Annual programming competition for students
+              type: team
+              max_team_members: 3
+  /dashboard/competitions/2/prizes:
+    get:
+      summary: index
+      responses: {}
+      tags:
+        - dashboard
+        - competitionprize
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+    post:
+      summary: craete
+      responses: {}
+      tags:
+        - dashboard
+        - competitionprize
+      security:
+        - BearerAuth: []
+  /dashboard/competitions/2/prizes/1:
+    put:
+      summary: edit
+      responses: {}
+      tags:
+        - dashboard
+        - competitionprize
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                rank:
+                  type: integer
+                prize_description:
+                  type: string
+            example:
+              title: First Place Prize
+              rank: 1
+              prize_description: Gold medal + $1500 cash prize
+  /dashboard/competitions/2/prizes/2:
+    delete:
+      summary: delete
+      responses: {}
+      tags:
+        - dashboard
+        - competitionprize
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                rank:
+                  type: integer
+                prize_description:
+                  type: string
+            example:
+              title: First Place Prize
+              rank: 1
+              prize_description: Gold medal + $1500 cash prize
+  /dashboard/events/tech-summit-20242/participants:
+    get:
+      summary: index
+      responses: {}
+      tags:
+        - dashboard
+        - eventParticipants
+      security:
+        - BearerAuth: []
+    post:
+      summary: create
+      responses: {}
+      tags:
+        - dashboard
+        - eventParticipants
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: integer
+                role:
+                  type: string
+            example:
+              user_id: 5
+              role: competitor
+  /dashboard/events/tech-summit-20242/participants/1:
+    delete:
+      summary: delete
+      responses: {}
+      tags:
+        - dashboard
+        - eventParticipants
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: integer
+                role:
+                  type: string
+            example:
+              user_id: 5
+              role: competitor
+  /dashboard/events/tech-summit-20242/speakers:
+    get:
+      summary: index
+      responses: {}
+      tags:
+        - dashboard
+        - speakers
+      security:
+        - BearerAuth: []
+    post:
+      summary: create
+      responses: {}
+      tags:
+        - dashboard
+        - speakers
+      security:
+        - BearerAuth: []
+  /dashboard/events/tech-summit-20242/speakers/1:
+    get:
+      summary: show
+      responses: {}
+      tags:
+        - dashboard
+        - speakers
+      security:
+        - BearerAuth: []
+  /dashboard/events/tech-summit-20242/speakers/2:
+    post:
+      summary: update
+      parameters:
+        - name: name
+          in: query
+          schema:
+            type: string
+          example: sss
+        - name: email
+          in: query
+          schema:
+            type: string
+          example: sss
+        - name: photo
+          in: query
+          schema:
+            type: string
+      responses: {}
+      tags:
+        - dashboard
+        - speakers
+      security:
+        - BearerAuth: []
+    delete:
+      summary: delete
+      parameters:
+        - name: name
+          in: query
+          schema:
+            type: string
+          example: sss
+        - name: email
+          in: query
+          schema:
+            type: string
+          example: sss
+        - name: photo
+          in: query
+          schema:
+            type: string
+      responses: {}
+      tags:
+        - dashboard
+        - speakers
+      security:
+        - BearerAuth: []
+  /dashboard/events/tech-summit-20242/sponsors:
+    get:
+      summary: index
+      responses: {}
+      tags:
+        - dashboard
+        - sponsors
+      security:
+        - BearerAuth: []
+    post:
+      summary: create
+      parameters:
+        - name: name
+          in: query
+          schema:
+            type: string
+          example: aaa
+        - name: website_url
+          in: query
+          schema:
+            type: string
+          example: dddd
+        - name: logo
+          in: query
+          schema:
+            type: string
+      responses: {}
+      tags:
+        - dashboard
+        - sponsors
+      security:
+        - BearerAuth: []
+  /dashboard/events/tech-summit-20242/sponsors/1:
+    get:
+      summary: show
+      responses: {}
+      tags:
+        - dashboard
+        - sponsors
+      security:
+        - BearerAuth: []
+    post:
+      summary: update
+      responses: {}
+      tags:
+        - dashboard
+        - sponsors
+      security:
+        - BearerAuth: []
+    delete:
+      summary: delete
+      responses: {}
+      tags:
+        - dashboard
+        - sponsors
+      security:
+        - BearerAuth: []
+  /dashboard/competitions/2/participants:
+    get:
+      summary: index
+      responses: {}
+      tags:
+        - dashboard
+        - CompetitionParticipant
+      security:
+        - BearerAuth: []
+    post:
+      summary: create
+      responses: {}
+      tags:
+        - dashboard
+        - CompetitionParticipant
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                event_participant_id:
+                  type: integer
+            example:
+              event_participant_id: 3
+  /dashboard/competitions/2/participants/1:
+    get:
+      summary: show
+      responses: {}
+      tags:
+        - dashboard
+        - CompetitionParticipant
+      security:
+        - BearerAuth: []
+    delete:
+      summary: delete
+      responses: {}
+      tags:
+        - dashboard
+        - CompetitionParticipant
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                event_participant_id:
+                  type: integer
+            example:
+              event_participant_id: 3
+  /site/register:
+    post:
+      summary: register
+      responses: {}
+      tags:
+        - frontend
+        - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: utc-millisec
+                password_confirmation:
+                  type: string
+                  format: utc-millisec
+            example:
+              name: John Doe
+              email: john@example.com
+              password: '12345678'
+              password_confirmation: '12345678'
+  /login:
+    post:
+      summary: login
+      responses: {}
+      tags:
+        - frontend
+        - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: utc-millisec
+            example:
+              email: john@example.com
+              password: '12345678'
+  /logout:
+    post:
+      summary: logout
+      responses: {}
+      tags:
+        - frontend
+        - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: utc-millisec
+            example:
+              email: john@example.com
+              password: '12345678'
+  /site/updatemyprofile:
+    post:
+      summary: profile.update
+      responses: {}
+      tags:
+        - frontend
+        - users
+      security:
+        - BearerAuth: []
+  /site/chapters/:
+    get:
+      summary: chapter.index
+      responses: {}
+      tags:
+        - frontend
+        - chapter
+  /site/chapters/1:
+    get:
+      summary: chapter.show
+      responses: {}
+      tags:
+        - frontend
+        - chapter
+  /site/tracks/2:
+    get:
+      summary: track.show
+      responses: {}
+      tags:
+        - frontend
+        - track
+      description: 'Generated from cURL: curl --request GET ''{{base_url}}/backend/tracks/2'''
+  /site/committees:
+    get:
+      summary: committee.index
+      responses: {}
+      tags:
+        - frontend
+        - committee
+      description: >-
+        Generated from cURL: curl --location '{{base_url}}/dashboard/committees'
+        --request GET
+  /site/committees/1:
+    get:
+      summary: committee.show
+      responses: {}
+      tags:
+        - frontend
+        - committee
+      description: >-
+        Generated from cURL: curl --location
+        '{{base_url}}/dashboard/committees/1' --request GET
+  /site/activities:
+    get:
+      summary: activity.index
+      responses: {}
+      tags:
+        - frontend
+        - activities
+      description: >-
+        Generated from cURL: curl --location '{{base_url}}/dashboard/activities'
+        --request GET
+  /site/activities/2:
+    get:
+      summary: activity.show
+      responses: {}
+      tags:
+        - frontend
+        - activities
+      description: >-
+        Generated from cURL: curl --location
+        '{{base_url}}/dashboard/activities/1' --request GET
+  /site/news:
+    get:
+      summary: index
+      responses: {}
+      tags:
+        - frontend
+        - news
+  /site/news/1:
+    get:
+      summary: show
+      responses: {}
+      tags:
+        - frontend
+        - news
+  /site/seasons:
+    get:
+      summary: seasons
+      responses: {}
+      tags:
+        - frontend
+        - seasons
+  /site/seasons/1:
+    get:
+      summary: show
+      responses: {}
+      tags:
+        - frontend
+        - seasons
+  /site/summaries:
+    get:
+      summary: index
+      responses: {}
+      tags:
+        - frontend
+        - summaries
+  /site/summaries/1:
+    get:
+      summary: show
+      responses: {}
+      tags:
+        - frontend
+        - summaries
+  /site/events:
+    get:
+      summary: index
+      responses: {}
+      tags:
+        - frontend
+        - events
+      security:
+        - BearerAuth: []
+  /site/events/tech-summit-2024:
+    get:
+      summary: show
+      responses: {}
+      tags:
+        - frontend
+        - events
+      security:
+        - BearerAuth: []
+  /api/site/events/tech-summit-20242/images:
+    get:
+      summary: index
+      responses: {}
+      tags:
+        - frontend
+        - eventsImages
+      security:
+        - BearerAuth: []
+  /site/competitions:
+    get:
+      summary: index
+      responses: {}
+      tags:
+        - frontend
+        - competitions
+      security:
+        - BearerAuth: []
+  /site/competitions/1:
+    get:
+      summary: show
+      responses: {}
+      tags:
+        - frontend
+        - competitions
+      security:
+        - BearerAuth: []
+  /site/competitions/2/prizes:
+    get:
+      summary: index
+      responses: {}
+      tags:
+        - frontend
+        - competitionprize
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+  /site/events/tech-summit-20242/participants:
+    get:
+      summary: index
+      responses: {}
+      tags:
+        - frontend
+        - eventParticipant
+      security:
+        - BearerAuth: []
+  /site/events/tech-summit-20242/speakers:
+    get:
+      summary: index
+      responses: {}
+      tags:
+        - frontend
+        - speakers
+      security:
+        - BearerAuth: []
+  /site/events/tech-summit-20242/speakers/1:
+    get:
+      summary: show
+      responses: {}
+      tags:
+        - frontend
+        - speakers
+      security:
+        - BearerAuth: []
+  /site/events/tech-summit-20242/sponsors:
+    get:
+      summary: index
+      responses: {}
+      tags:
+        - frontend
+        - sponsors
+      security:
+        - BearerAuth: []
+  /site/events/tech-summit-20242/sponsors/1:
+    get:
+      summary: show
+      responses: {}
+      tags:
+        - frontend
+        - sponsors
+      security:
+        - BearerAuth: []
+  /eventsgate/register:
+    post:
+      summary: register
+      responses: {}
+      tags:
+        - eventsgate
+        - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: utc-millisec
+                password_confirmation:
+                  type: string
+                  format: utc-millisec
+                phone_number:
+                  type: string
+                  format: utc-millisec
+                national_id:
+                  type: string
+                  format: utc-millisec
+            example:
+              name: John Doe
+              email: john@example.com
+              password: '12345678'
+              password_confirmation: '12345678'
+              phone_number: '123456789'
+              national_id: '1111111111'
+  /eventsgate/login:
+    post:
+      summary: login
+      responses: {}
+      tags:
+        - eventsgate
+        - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: utc-millisec
+            example:
+              email: john@example.com
+              password: '12345678'
+  /eventsgate/logout:
+    post:
+      summary: logout
+      responses: {}
+      tags:
+        - eventsgate
+        - auth
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: utc-millisec
+            example:
+              email: john@example.com
+              password: '12345678'
+  /eventsgate/verify-registration:
+    post:
+      summary: verifyRegisterEmail
+      responses: {}
+      tags:
+        - eventsgate
+        - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                verification_code:
+                  type: string
+                  format: color
+            example:
+              email: john@example.com
+              verification_code: '918540'
+  /eventsgate/send-password-reset-code:
+    post:
+      summary: sendcodeResetPassword
+      responses: {}
+      tags:
+        - eventsgate
+        - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+            example:
+              email: john@example.com
+  /eventsgate/reset-password:
+    post:
+      summary: resetPassword
+      responses: {}
+      tags:
+        - eventsgate
+        - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                verification_code:
+                  type: string
+                  format: color
+                password:
+                  type: string
+                  format: utc-millisec
+                password_confirmation:
+                  type: string
+                  format: utc-millisec
+            example:
+              email: john@example.com
+              verification_code: '555421'
+              password: '12345678'
+              password_confirmation: '12345678'
+  /eventsgate/events:
+    get:
+      summary: index
+      responses: {}
+      tags:
+        - eventsgate
+        - events
+      security:
+        - BearerAuth: []
+  /eventsgate/events/tech-summit-2024:
+    get:
+      summary: show
+      responses: {}
+      tags:
+        - eventsgate
+        - events
+      security:
+        - BearerAuth: []
+  /api/eventsgate/events/tech-summit-20242/images:
+    get:
+      summary: index
+      responses: {}
+      tags:
+        - eventsgate
+        - eventsImages
+      security:
+        - BearerAuth: []
+  /eventsgate/competitions:
+    get:
+      summary: index
+      responses: {}
+      tags:
+        - eventsgate
+        - competitions
+      security:
+        - BearerAuth: []
+  /eventsgate/competitions/1:
+    get:
+      summary: show
+      responses: {}
+      tags:
+        - eventsgate
+        - competitions
+      security:
+        - BearerAuth: []
+  /eventsgate/competitions/2/prizes:
+    get:
+      summary: index
+      responses: {}
+      tags:
+        - eventsgate
+        - competitionprize
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+  /eventsgate/events/tech-summit-20242/register:
+    post:
+      summary: registerToEvent
+      responses: {}
+      tags:
+        - eventsgate
+        - eventParticipant
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                role:
+                  type: string
+            example:
+              role: competitor
+  /eventsgate/events/tech-summit-20242/unregister:
+    delete:
+      summary: unregister ToEvent
+      responses: {}
+      tags:
+        - eventsgate
+        - eventParticipant
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                role:
+                  type: string
+            example:
+              role: competitor
+  /eventsgate/events/tech-summit-20242/speakers:
+    get:
+      summary: index
+      responses: {}
+      tags:
+        - eventsgate
+        - speakers
+      security:
+        - BearerAuth: []
+  /eventsgate/events/tech-summit-20242/speakers/1:
+    get:
+      summary: show
+      responses: {}
+      tags:
+        - eventsgate
+        - speakers
+      security:
+        - BearerAuth: []
+  /eventsgate/events/tech-summit-20242/sponsors:
+    get:
+      summary: index
+      responses: {}
+      tags:
+        - eventsgate
+        - sponsors
+      security:
+        - BearerAuth: []
+  /eventsgate/events/tech-summit-20242/sponsors/1:
+    get:
+      summary: show
+      responses: {}
+      tags:
+        - eventsgate
+        - sponsors
+      security:
+        - BearerAuth: []
+  /eventsgate/competitions/6/register:
+    post:
+      summary: competitionRegister
+      responses: {}
+      tags:
+        - eventsgate
+        - CompetitionParticipant
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                event_participant_id:
+                  type: integer
+            example:
+              event_participant_id: 1
+  /eventsgate/competitions/6/unregister:
+    delete:
+      summary: competitionUnregister
+      responses: {}
+      tags:
+        - eventsgate
+        - CompetitionParticipant
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                event_participant_id:
+                  type: integer
+            example:
+              event_participant_id: 1
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer

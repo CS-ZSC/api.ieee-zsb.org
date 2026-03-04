@@ -46,6 +46,7 @@ class AppServiceProvider extends ServiceProvider
             'activity'  => Activity::class,
             'news'      => News::class,
         ]);
+
     }
 
     /**

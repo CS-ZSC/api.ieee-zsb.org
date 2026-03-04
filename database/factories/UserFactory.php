@@ -29,7 +29,6 @@ class UserFactory extends Factory
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
-            'position' => 'user', // Default position for site-registered users
             'created_at' => fake()->dateTimeBetween('-2 years'),
             'updated_at' => fn (array $attributes) => $attributes['created_at'],
         ];

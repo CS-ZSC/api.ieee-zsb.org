@@ -52,6 +52,7 @@ class PermissionSeeder extends Seeder
             'edit competitions',
             'delete competitions',
             'manage competition prizes',
+            'manage competition participants',
 
             // News
             'manage news',

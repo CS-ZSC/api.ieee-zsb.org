@@ -39,9 +39,21 @@ class CompetitionParticipantController extends Controller
             ], 404);
         }
 
+        $this->authorize('manageParticipants', $competition);
+
         $validated = $request->validate([
             'event_participant_id' => 'required|integer|exists:event_participants,id',
         ]);
+
+        // Check if the event_participant belongs to the same event as the competition
+        $eventParticipant = \App\Models\EventParticipant::find($validated['event_participant_id']);
+
+        if ($eventParticipant->event_id !== $competition->event_id) {
+            return response()->json([
+                'message' => 'You must be registered for this competition\'s event first',
+                'data' => null
+            ], 403);
+        }
 
         $exists = CompetitionParticipant::where('competition_id', $competition->id)
             ->where('event_participant_id', $validated['event_participant_id'])
@@ -65,9 +77,21 @@ class CompetitionParticipantController extends Controller
         ], 201);
     }
 
-    public function show($id)
+    public function show($competitionId, $participantId)
     {
-        $participant = CompetitionParticipant::with('eventParticipant.user', 'competition')->find($id);
+        $competition = Competition::find($competitionId);
+
+        if (!$competition) {
+            return response()->json([
+                'message' => 'Competition not found',
+                'data' => null
+            ], 404);
+        }
+
+        $participant = CompetitionParticipant::where('id', $participantId)
+            ->where('competition_id', $competition->id)
+            ->with('eventParticipant.user', 'competition')
+            ->first();
 
         if (!$participant) {
             return response()->json([
@@ -82,9 +106,22 @@ class CompetitionParticipantController extends Controller
         ]);
     }
 
-    public function destroy($id)
+    public function destroy($competitionId, $participantId)
     {
-        $participant = CompetitionParticipant::find($id);
+        $competition = Competition::find($competitionId);
+
+        if (!$competition) {
+            return response()->json([
+                'message' => 'Competition not found',
+                'data' => null
+            ], 404);
+        }
+
+        $this->authorize('manageParticipants', $competition);
+
+        $participant = CompetitionParticipant::where('id', $participantId)
+            ->where('competition_id', $competition->id)
+            ->first();
 
         if (!$participant) {
             return response()->json([
@@ -97,6 +134,107 @@ class CompetitionParticipantController extends Controller
 
         return response()->json([
             'message' => 'Participant removed successfully',
+            'data' => null
+        ]);
+    }
+
+    public function registerUser(Request $request, $competitionId)
+    {
+        $user = $request->user();
+
+        // Check if user is a visitor
+        if (!$user->positions()->where('name', 'Visitor')->exists()) {
+            return response()->json([
+                'message' => 'Only visitors can register for competitions',
+                'data' => null
+            ], 403);
+        }
+
+        $competition = Competition::find($competitionId);
+
+        if (!$competition) {
+            return response()->json([
+                'message' => 'Competition not found',
+                'data' => null
+            ], 404);
+        }
+
+        // Check if user is registered for the competition's event
+        $eventParticipant = \App\Models\EventParticipant::where('user_id', $user->id)
+            ->where('event_id', $competition->event_id)
+            ->first();
+
+        if (!$eventParticipant) {
+            return response()->json([
+                'message' => 'You must be registered for this competition\'s event first',
+                'data' => null
+            ], 403);
+        }
+
+        // Check if already registered
+        $exists = CompetitionParticipant::where('competition_id', $competition->id)
+            ->where('event_participant_id', $eventParticipant->id)
+            ->exists();
+
+        if ($exists) {
+            return response()->json([
+                'message' => 'You are already registered for this competition',
+                'data' => null
+            ], 409);
+        }
+
+        $participant = CompetitionParticipant::create([
+            'competition_id' => $competition->id,
+            'event_participant_id' => $eventParticipant->id,
+        ]);
+
+        return response()->json([
+            'message' => 'Successfully registered for competition',
+            'data' => $participant->load('eventParticipant.user')
+        ], 201);
+    }
+
+    public function unregisterUser(Request $request, $competitionId)
+    {
+        $user = $request->user();
+
+        $competition = Competition::find($competitionId);
+
+        if (!$competition) {
+            return response()->json([
+                'message' => 'Competition not found',
+                'data' => null
+            ], 404);
+        }
+
+        // Find the user's event participant record for this event
+        $eventParticipant = \App\Models\EventParticipant::where('user_id', $user->id)
+            ->where('event_id', $competition->event_id)
+            ->first();
+
+        if (!$eventParticipant) {
+            return response()->json([
+                'message' => 'You are not registered for this competition\'s event',
+                'data' => null
+            ], 404);
+        }
+
+        // Find and delete the competition participant record
+        $participant = CompetitionParticipant::where('competition_id', $competition->id)
+            ->where('event_participant_id', $eventParticipant->id)
+            ->first();
+
+        if (!$participant) {
+            return response()->json([
+                'message' => 'You are not registered for this competition',
+                'data' => null
+            ], 404);
+        }
+
+        $participant->delete();
+
+        return response()->json([
+            'message' => 'Successfully unregistered from competition',
             'data' => null
         ]);
     }

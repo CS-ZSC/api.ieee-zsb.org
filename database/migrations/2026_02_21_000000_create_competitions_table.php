@@ -9,8 +9,8 @@ return new class extends Migration {
     {
         Schema::create('competitions', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('event_id')->nullable();
-            $table->unsignedBigInteger('chapter_id')->nullable();
+            $table->foreignId('event_id')->nullable()->constrained('events')->onDelete('cascade');
+            $table->foreignId('chapter_id')->nullable()->constrained('chapters')->onDelete('cascade');
             $table->string('name');
             $table->text('overview')->nullable();
             $table->string('type'); // 'individual' or 'team'

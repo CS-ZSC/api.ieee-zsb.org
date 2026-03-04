@@ -77,6 +77,10 @@ class AuthController extends Controller
             ], 401);
         }
 
+        // Reassign roles based on current positions
+        $user->assignDefaultRole();
+        $user->load('positions.role', 'roles');
+
         // Generate token
         $token = $user->createToken('site-token')->plainTextToken;
 
@@ -84,6 +88,7 @@ class AuthController extends Controller
             'message' => 'Login successful',
             'data'    => $user,
             'token'   => $token,
+            'token_type' => 'Bearer',
         ]);
     }
 
@@ -119,6 +124,9 @@ class AuthController extends Controller
                 'email' => ['The provided credentials are incorrect.'],
             ]);
         }
+
+        // Reassign roles based on current positions
+        $user->assignDefaultRole();
 
         // Only allow users who have a role with at least one permission
         $hasAdminRole = $user->roles()
@@ -246,6 +254,10 @@ class AuthController extends Controller
             ], 401);
         }
 
+        // Reassign roles based on current positions
+        $user->assignDefaultRole();
+        $user->load('positions.role', 'roles');
+
         // Generate EventsGate-specific token
         $token = $user->createToken('eventsgate-token')->plainTextToken;
 
@@ -253,6 +265,7 @@ class AuthController extends Controller
             'message' => 'EventsGate login successful',
             'data'    => $user,
             'token'   => $token,
+            'token_type' => 'Bearer',
         ]);
     }
 
