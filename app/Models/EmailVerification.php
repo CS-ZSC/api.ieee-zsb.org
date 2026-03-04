@@ -104,6 +104,7 @@ class EmailVerification extends Model
             'national_id' => $this->national_id,
             'password' => $this->password,
             'email_verified_at' => now(),
+            'join_code' => \App\Models\User::generateUniqueJoinCode(),
         ]);
 
         // Assign Visitor position and role for EventsGate users

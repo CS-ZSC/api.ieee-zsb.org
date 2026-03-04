@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Str;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
@@ -32,7 +33,8 @@ class User extends Authenticatable
         'groupable_id',
         'groupable_type',
         'phone_number',
-        'national_id'
+        'national_id',
+        'join_code',
     ];
 
     /**
@@ -314,6 +316,15 @@ class User extends Authenticatable
         }
     }
 
+
+    public static function generateUniqueJoinCode(): string
+    {
+        do {
+            $code = strtoupper(Str::random(8));
+        } while (self::where('join_code', $code)->exists());
+
+        return $code;
+    }
 
     public function events()
     {

@@ -254,6 +254,11 @@ class AuthController extends Controller
             ], 401);
         }
 
+        // Generate join_code if user doesn't have one yet
+        if (!$user->join_code) {
+            $user->update(['join_code' => User::generateUniqueJoinCode()]);
+        }
+
         // Reassign roles based on current positions
         $user->assignDefaultRole();
         $user->load('positions.role', 'roles');

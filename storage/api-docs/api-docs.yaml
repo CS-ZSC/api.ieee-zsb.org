@@ -2955,6 +2955,244 @@ paths:
                   type: integer
             example:
               event_participant_id: 3
+  /api/dashboard/competitions/{competition}/teams:
+    get:
+      parameters:
+        - name: competition
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Competition ID
+      summary: listTeams
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '404':
+          description: Competition not found
+      tags:
+        - Dashboard
+      security:
+        - BearerAuth: []
+    post:
+      parameters:
+        - name: competition
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Competition ID
+      summary: adminCreateTeam
+      responses:
+        '201':
+          description: Team created
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+      tags:
+        - Dashboard
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - leader_event_participant_id
+              properties:
+                name:
+                  type: string
+                leader_event_participant_id:
+                  type: integer
+            example:
+              name: Team Alpha
+              leader_event_participant_id: 1
+  /api/dashboard/competitions/{competition}/teams/{team}:
+    get:
+      parameters:
+        - name: competition
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Competition ID
+        - name: team
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Team ID
+      summary: showTeam
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '404':
+          description: Team not found
+      tags:
+        - Dashboard
+      security:
+        - BearerAuth: []
+    delete:
+      parameters:
+        - name: competition
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Competition ID
+        - name: team
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Team ID
+      summary: adminDeleteTeam
+      responses:
+        '200':
+          description: Team deleted
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '404':
+          description: Team not found
+      tags:
+        - Dashboard
+      security:
+        - BearerAuth: []
+  /api/dashboard/competitions/{competition}/teams/{team}/members:
+    get:
+      parameters:
+        - name: competition
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Competition ID
+        - name: team
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Team ID
+      summary: listTeamMembers
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '404':
+          description: Team not found
+      tags:
+        - Dashboard
+      security:
+        - BearerAuth: []
+    post:
+      parameters:
+        - name: competition
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Competition ID
+        - name: team
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Team ID
+      summary: addTeamMember
+      responses:
+        '201':
+          description: Member added
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '409':
+          description: Already a member
+        '422':
+          description: Team is full
+      tags:
+        - Dashboard
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - event_participant_id
+              properties:
+                event_participant_id:
+                  type: integer
+            example:
+              event_participant_id: 3
+  /api/dashboard/competitions/{competition}/teams/{team}/members/{member}:
+    delete:
+      parameters:
+        - name: competition
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Competition ID
+        - name: team
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Team ID
+        - name: member
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Member ID
+      summary: removeTeamMember
+      responses:
+        '200':
+          description: Member removed
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+        '404':
+          description: Member not found
+      tags:
+        - Dashboard
+      security:
+        - BearerAuth: []
   /api/site/register:
     post:
       summary: register
@@ -4258,6 +4496,156 @@ paths:
                   type: integer
             example:
               event_participant_id: 1
+  /api/eventsgate/competitions/{competition}/teams:
+    get:
+      parameters:
+        - name: competition
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Competition ID
+      summary: listTeams
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: Competition not found
+      tags:
+        - EventsGate
+    post:
+      parameters:
+        - name: competition
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Competition ID
+      summary: createTeam
+      responses:
+        '201':
+          description: Team created
+          content:
+            application/json:
+              schema:
+                type: object
+        '403':
+          description: Not registered for event
+        '409':
+          description: Already in a team
+        '422':
+          description: Competition does not support teams
+      tags:
+        - EventsGate
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+              properties:
+                name:
+                  type: string
+            example:
+              name: Team Alpha
+  /api/eventsgate/competitions/{competition}/teams/{team}:
+    get:
+      parameters:
+        - name: competition
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Competition ID
+        - name: team
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Team ID
+      summary: showTeam
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: Team not found
+      tags:
+        - EventsGate
+  /api/eventsgate/competitions/{competition}/teams/join:
+    post:
+      parameters:
+        - name: competition
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Competition ID
+      summary: joinTeam
+      responses:
+        '200':
+          description: Joined team successfully
+          content:
+            application/json:
+              schema:
+                type: object
+        '403':
+          description: Not registered for event
+        '404':
+          description: Invalid join code
+        '409':
+          description: Already in a team
+        '422':
+          description: Team is full
+      tags:
+        - EventsGate
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - join_code
+              properties:
+                join_code:
+                  type: string
+            example:
+              join_code: ABC123
+  /api/eventsgate/competitions/{competition}/teams/leave:
+    delete:
+      parameters:
+        - name: competition
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Competition ID
+      summary: leaveTeam
+      responses:
+        '200':
+          description: Left team successfully
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: Not in any team
+      tags:
+        - EventsGate
+      security:
+        - BearerAuth: []
 components:
   securitySchemes:
     BearerAuth:

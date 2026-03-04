@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Competition;
 use App\Models\CompetitionParticipant;
+use App\Models\TeamMember;
 use Illuminate\Http\Request;
 
 class CompetitionParticipantController extends Controller
@@ -55,13 +56,27 @@ class CompetitionParticipantController extends Controller
             ], 403);
         }
 
-        $exists = CompetitionParticipant::where('competition_id', $competition->id)
+        // Check if already in ANY competition for this event (individual or team)
+        $eventCompetitionIds = Competition::where('event_id', $competition->event_id)->pluck('id');
+
+        $inIndividual = CompetitionParticipant::whereIn('competition_id', $eventCompetitionIds)
             ->where('event_participant_id', $validated['event_participant_id'])
             ->exists();
 
-        if ($exists) {
+        if ($inIndividual) {
             return response()->json([
-                'message' => 'Participant already registered in this competition',
+                'message' => 'Participant is already registered in a competition for this event',
+                'data' => null
+            ], 409);
+        }
+
+        $inTeam = TeamMember::whereHas('team', function ($q) use ($eventCompetitionIds) {
+            $q->whereIn('competition_id', $eventCompetitionIds);
+        })->where('event_participant_id', $validated['event_participant_id'])->exists();
+
+        if ($inTeam) {
+            return response()->json([
+                'message' => 'Participant is already in a team competition for this event',
                 'data' => null
             ], 409);
         }
@@ -159,6 +174,13 @@ class CompetitionParticipantController extends Controller
             ], 404);
         }
 
+        if ($competition->type === 'team') {
+            return response()->json([
+                'message' => 'This is a team competition. Use the teams endpoint to create or join a team',
+                'data' => null
+            ], 422);
+        }
+
         // Check if user is registered for the competition's event
         $eventParticipant = \App\Models\EventParticipant::where('user_id', $user->id)
             ->where('event_id', $competition->event_id)
@@ -171,14 +193,27 @@ class CompetitionParticipantController extends Controller
             ], 403);
         }
 
-        // Check if already registered
-        $exists = CompetitionParticipant::where('competition_id', $competition->id)
+        // Check if already registered in ANY competition for this event (individual or team)
+        $eventCompetitionIds = Competition::where('event_id', $competition->event_id)->pluck('id');
+
+        $inIndividual = CompetitionParticipant::whereIn('competition_id', $eventCompetitionIds)
             ->where('event_participant_id', $eventParticipant->id)
             ->exists();
 
-        if ($exists) {
+        if ($inIndividual) {
             return response()->json([
-                'message' => 'You are already registered for this competition',
+                'message' => 'You are already registered in a competition for this event',
+                'data' => null
+            ], 409);
+        }
+
+        $inTeam = TeamMember::whereHas('team', function ($q) use ($eventCompetitionIds) {
+            $q->whereIn('competition_id', $eventCompetitionIds);
+        })->where('event_participant_id', $eventParticipant->id)->exists();
+
+        if ($inTeam) {
+            return response()->json([
+                'message' => 'You are already in a team competition for this event',
                 'data' => null
             ], 409);
         }
