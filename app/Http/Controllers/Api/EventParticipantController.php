@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Event;
 use App\Models\EventParticipant;
+use App\Models\Ticket;
 use Illuminate\Http\Request;
 
 class EventParticipantController extends Controller
@@ -148,6 +149,12 @@ class EventParticipantController extends Controller
             'user_id' => $user->id,
             'role' => $validated['role'],
         ]);
+
+        // create ticket for user with status new
+        Ticket::create([
+            'event_participant_id' => $participant->id,
+            'status' => 'new'
+        ]);    
 
         return response()->json([
             'message' => 'Registered successfully',
