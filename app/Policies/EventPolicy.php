@@ -61,4 +61,9 @@ class EventPolicy
     {
         return $user->hasPermission('manage event participants');
     }
+
+    public function manageTickets(User $user)
+    {
+        return $user->hasPermission('manage tickets');
+    }
 }

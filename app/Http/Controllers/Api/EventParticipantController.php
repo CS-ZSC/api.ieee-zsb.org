@@ -150,10 +150,9 @@ class EventParticipantController extends Controller
             'role' => $validated['role'],
         ]);
 
-        // create ticket for user with status new
         Ticket::create([
             'event_participant_id' => $participant->id,
-            'status' => 'new'
+            'status' => 'pending'
         ]);    
 
         return response()->json([

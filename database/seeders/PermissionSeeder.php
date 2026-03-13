@@ -45,6 +45,7 @@ class PermissionSeeder extends Seeder
             'manage event participants',
             'manage speakers',
             'manage sponsors',
+            'manage tickets',
 
             // Competitions
             'view competitions',

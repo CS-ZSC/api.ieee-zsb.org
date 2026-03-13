@@ -24,4 +24,9 @@ class EventParticipant extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function ticket()
+    {
+        return $this->hasOne(Ticket::class);
+    }
 }

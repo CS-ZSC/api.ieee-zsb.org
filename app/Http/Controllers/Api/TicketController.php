@@ -3,11 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\CompetitionParticipant;
+use App\Models\Event;
 use App\Models\Ticket;
 use Illuminate\Http\Request;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
 
 class TicketController extends Controller
 {
@@ -24,52 +23,64 @@ class TicketController extends Controller
             'message' => 'Tickets list',
             'data' => $tickets
         ]);
-        
     }
 
-
-    // get information about user from ticket
     public function verifyUserTicket(Request $request)
     {
+        $this->authorize('manageTickets', Event::class);
+
         $request->validate([
             'qr_code' => 'required|uuid'
         ]);
-    
+
         $ticket = Ticket::where('qr_code', $request->qr_code)
             ->with('eventParticipant.user', 'eventParticipant.event')
             ->first();
-    
+
         if (!$ticket) {
             return response()->json([
                 'message' => 'Invalid ticket'
             ], 404);
         }
-    
-        if ($ticket->status !== 'new') {
+
+        if ($ticket->status !== 'pending') {
             return response()->json([
-                'message' => 'Ticket already used or invalid'
+                'message' => 'Ticket already verified, checked in, or invalid',
+                'data' => ['ticket_status' => $ticket->status]
             ], 409);
         }
-    
+
+        $ticket->status = 'verified';
+        $ticket->save();
+
         $participant = $ticket->eventParticipant;
-    
+
+        $competitions = CompetitionParticipant::where('event_participant_id', $participant->id)
+            ->with('competition')
+            ->get()
+            ->pluck('competition');
+
+        $data = [
+            'user' => $participant->user,
+            'event' => $participant->event,
+            'role' => $participant->role,
+            'ticket_status' => $ticket->status
+        ];
+
+        if ($competitions->isNotEmpty()) {
+            $data['competitions'] = $competitions;
+        }
+
         return response()->json([
-            'message' => 'Ticket valid',
-            'data' => [
-                'user' => $participant->user,
-                'event' => $participant->event,
-                'role' => $participant->role,
-                'ticket_status' => $ticket->status
-            ]
+            'message' => 'Ticket verified',
+            'data' => $data
         ]);
-
-
-        
     }
 
-    // check in user after verifying info
     public function checkinUser(Request $request)
     {
+        $this->authorize('manageTickets', Event::class);
+
         $request->validate([
             'qr_code' => 'required|uuid'
         ]);
@@ -81,10 +92,13 @@ class TicketController extends Controller
                 'message' => 'Invalid ticket'
             ], 404);
         }
-    
-        if ($ticket->status !== 'new') {
+
+        if ($ticket->status !== 'verified') {
             return response()->json([
-                'message' => 'Ticket already used or invalid'
+                'message' => $ticket->status === 'checked_in'
+                    ? 'Ticket already checked in'
+                    : 'Ticket must be verified before check-in',
+                'data' => ['ticket_status' => $ticket->status]
             ], 409);
         }
 
@@ -94,9 +108,5 @@ class TicketController extends Controller
         return response()->json([
             'message' => 'Checked in successfully'
         ], 200);
-    
-
-        
     }
-
 }

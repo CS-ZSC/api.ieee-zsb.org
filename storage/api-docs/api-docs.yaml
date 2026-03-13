@@ -4,10 +4,7 @@ info:
   version: 1.0.0
   description: 'IEEE Backend API Documentation - Test your API routes with authentication'
 servers:
-  - url: 'http://127.0.0.1:8001'
-    description: 'Local Development Server'
-  - url: 'http://localhost:8000'
-    description: 'Alternative Local Server'
+  - url: '/'
 tags:
   - name: Dashboard
     description: 'Backend admin routes - requires authentication and admin permissions'
@@ -4646,6 +4643,173 @@ paths:
         - EventsGate
       security:
         - BearerAuth: []
+  /api/eventsgate/tickets/my-tickets:
+    get:
+      summary: getUserTickets
+      description: Get all tickets for the authenticated user
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Tickets list
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        ticket_type:
+                          type: string
+                          nullable: true
+                        qr_code:
+                          type: string
+                          format: uuid
+                        status:
+                          type: string
+                          enum: [pending, verified, checked_in]
+                        created_at:
+                          type: string
+                          format: date-time
+                        updated_at:
+                          type: string
+                          format: date-time
+        '401':
+          description: Unauthorized
+      tags:
+        - EventsGate
+      security:
+        - BearerAuth: []
+  /api/eventsgate/tickets/verify:
+    post:
+      summary: verifyUserTicket
+      description: 'Organizer scans QR code to verify ticket and view holder info. Changes status from pending to verified. Returns user, event, role, and competitions if any.'
+      responses:
+        '200':
+          description: Ticket verified
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Ticket verified
+                  data:
+                    type: object
+                    properties:
+                      user:
+                        type: object
+                      event:
+                        type: object
+                      role:
+                        type: string
+                        example: competitor
+                      ticket_status:
+                        type: string
+                        example: verified
+                      competitions:
+                        type: array
+                        description: Only present if user joined competitions
+                        items:
+                          type: object
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden - requires manage tickets permission
+        '404':
+          description: Invalid ticket
+        '409':
+          description: Ticket already verified, checked in, or invalid
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      ticket_status:
+                        type: string
+      tags:
+        - EventsGate
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - qr_code
+              properties:
+                qr_code:
+                  type: string
+                  format: uuid
+            example:
+              qr_code: 550e8400-e29b-41d4-a716-446655440000
+  /api/eventsgate/tickets/check-in:
+    post:
+      summary: checkinUser
+      description: 'Organizer checks in a verified user. Changes status from verified to checked_in. Ticket must be verified first.'
+      responses:
+        '200':
+          description: Checked in successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Checked in successfully
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden - requires manage tickets permission
+        '404':
+          description: Invalid ticket
+        '409':
+          description: Ticket already checked in or not yet verified
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      ticket_status:
+                        type: string
+      tags:
+        - EventsGate
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - qr_code
+              properties:
+                qr_code:
+                  type: string
+                  format: uuid
+            example:
+              qr_code: 550e8400-e29b-41d4-a716-446655440000
 components:
   securitySchemes:
     BearerAuth:
