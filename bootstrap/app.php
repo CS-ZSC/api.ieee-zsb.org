@@ -79,9 +79,16 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $exceptions->render(function (\Throwable $e, Request $request) {
             if ($request->is('api/*')) {
-                return response()->json([
+                $response = [
                     'message' => 'Something went wrong. Please try again later.',
-                ], 500);
+                ];
+
+                if (config('app.debug')) {
+                    $response['error'] = $e->getMessage();
+                    $response['trace'] = $e->getTraceAsString();
+                }
+
+                return response()->json($response, 500);
             }
         });
     })->create();
