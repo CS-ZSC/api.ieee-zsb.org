@@ -13,7 +13,12 @@ class ForceJsonResponse
 
         $response = $next($request);
 
-        // Force JSON content type regardless of what's already set
+        // Don't force JSON for documentation endpoint
+        if ($request->is('api/documentation')) {
+            return $response;
+        }
+
+        // Force JSON content type for all other API routes
         $response->headers->set('Content-Type', 'application/json');
 
         return $response;

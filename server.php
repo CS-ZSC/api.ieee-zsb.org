@@ -12,8 +12,8 @@ if ($uri !== '/' && file_exists($file = __DIR__.'/public'.$uri)) {
     return;
 }
 
-// Set proper headers for API requests
-if (str_starts_with($uri, '/api/')) {
+// Set proper headers for API requests (except documentation)
+if (str_starts_with($uri, '/api/') && !str_ends_with($uri, '/api/documentation')) {
     header('Content-Type: application/json');
     header('Access-Control-Allow-Origin: *');
     header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
