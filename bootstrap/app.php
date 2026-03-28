@@ -24,6 +24,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // Enable CORS for API routes
         $middleware->api(prepend: [
             \Illuminate\Http\Middleware\HandleCors::class,
+            \App\Http\Middleware\ForceJsonResponse::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
