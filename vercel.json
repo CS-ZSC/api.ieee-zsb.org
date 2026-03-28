@@ -14,7 +14,7 @@
     ],
     "env": {
         "APP_ENV": "production",
-        "APP_DEBUG": "true",
+        "APP_DEBUG": "false",
         "APP_URL": "https://api-ieee-zsb-org-zs9o.vercel.app",
         "ASSET_URL": "/",
         "APP_CONFIG_CACHE": "/tmp/config.php",

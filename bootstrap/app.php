@@ -81,7 +81,6 @@ return Application::configure(basePath: dirname(__DIR__))
             if ($request->is('api/*')) {
                 return response()->json([
                     'message' => 'Something went wrong. Please try again later.',
-                    'error' => $e->getMessage(),
                 ], 500);
             }
         });
