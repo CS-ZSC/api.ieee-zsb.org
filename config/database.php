@@ -59,7 +59,17 @@ return [
             'strict' => true,
             'engine' => null,
             'options' => extension_loaded('pdo_mysql') ? array_filter([
-                (PHP_VERSION_ID >= 80500 ? \PDO::MYSQL_ATTR_SSL_CA : \PDO::MYSQL_ATTR_SSL_CA) => env('MYSQL_ATTR_SSL_CA'),
+                \PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA') ?: (function () {
+                    $cert = env('MYSQL_SSL_CA_CERT');
+                    if ($cert) {
+                        $path = '/tmp/aiven-ca.pem';
+                        if (!file_exists($path)) {
+                            file_put_contents($path, $cert);
+                        }
+                        return $path;
+                    }
+                    return null;
+                })(),
             ]) : [],
         ],
 
