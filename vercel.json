@@ -17,7 +17,6 @@
         "APP_DEBUG": "true",
         "APP_URL": "https://api-ieee-zsb-org-zs9o.vercel.app",
         "ASSET_URL": "/",
-        "MYSQL_ATTR_SSL_CA": "/var/task/storage/aiven-ca.pem",
         "APP_CONFIG_CACHE": "/tmp/config.php",
         "APP_EVENTS_CACHE": "/tmp/events.php",
         "APP_PACKAGES_CACHE": "/tmp/packages.php",
