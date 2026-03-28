@@ -9,10 +9,7 @@
     "routes": [
         {
             "src": "/api/(.*)",
-            "dest": "/server.php",
-            "headers": {
-                "Content-Type": "application/json"
-            }
+            "dest": "/server.php"
         },
         {
             "src": "/(.*)",
