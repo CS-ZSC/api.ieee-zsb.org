@@ -13,10 +13,8 @@ class ForceJsonResponse
 
         $response = $next($request);
 
-        // Ensure the response is JSON
-        if (!$response->headers->has('Content-Type') || !str_contains($response->headers->get('Content-Type'), 'application/json')) {
-            $response->headers->set('Content-Type', 'application/json');
-        }
+        // Force JSON content type regardless of what's already set
+        $response->headers->set('Content-Type', 'application/json');
 
         return $response;
     }

@@ -12,6 +12,14 @@ if ($uri !== '/' && file_exists($file = __DIR__.'/public'.$uri)) {
     return;
 }
 
+// Set proper headers for API requests
+if (str_starts_with($uri, '/api/')) {
+    header('Content-Type: application/json');
+    header('Access-Control-Allow-Origin: *');
+    header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+    header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
+}
+
 // Forward everything else to Laravel
 require_once __DIR__.'/public/index.php';
 
