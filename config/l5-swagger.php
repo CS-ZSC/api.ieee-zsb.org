@@ -5,7 +5,7 @@ return [
     'documentations' => [
         'default' => [
             'api' => [
-                'title' => 'IEEE API Documentation',
+                'title' => 'L5 Swagger UI',
             ],
 
             'routes' => [
@@ -18,7 +18,7 @@ return [
                 /*
                  * Edit to include full URL in ui for assets
                  */
-                'use_absolute_path' => env('L5_SWAGGER_USE_ABSOLUTE_PATH', false),
+                'use_absolute_path' => env('L5_SWAGGER_USE_ABSOLUTE_PATH', true),
 
                 /*
                 * Edit to set path where swagger ui assets should be stored
@@ -38,13 +38,14 @@ return [
                 /*
                  * Set this to `json` or `yaml` to determine which documentation file to use in UI
                  */
-                'format_to_use_for_docs' => env('L5_FORMAT_TO_USE_FOR_DOCS', 'yaml'),
+                'format_to_use_for_docs' => env('L5_FORMAT_TO_USE_FOR_DOCS', 'json'),
 
                 /*
                  * Absolute paths to directory containing the swagger annotations are stored.
-                 * EMPTY = No scanning, use manual YAML file only
                  */
-                'annotations' => [],
+                'annotations' => [
+                    base_path('app'),
+                ],
             ],
         ],
     ],
