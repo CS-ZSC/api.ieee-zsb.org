@@ -13,7 +13,7 @@ if ($uri !== '/' && file_exists($file = __DIR__.'/public'.$uri)) {
 }
 
 // For API requests (except documentation), capture and modify output
-if (str_starts_with($uri, '/api/') && !str_ends_with($uri, '/api/documentation')) {
+if (str_starts_with($uri, '/api/') && !str_starts_with($uri, '/api/documentation')) {
     // Capture Laravel output
     ob_start();
     require_once __DIR__.'/public/index.php';
