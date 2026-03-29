@@ -36,8 +36,22 @@ if (str_starts_with($uri, '/api/') && !str_starts_with($uri, '/api/documentation
     return;
 }
 
-// Forward everything else to Laravel
+// Forward everything else to Laravel (with header re-emission for vercel-php compatibility)
+ob_start();
 require_once __DIR__.'/public/index.php';
+$content = ob_get_clean();
+
+// vercel-php ignores header() calls from within require'd files,
+// so we capture Laravel's headers and re-emit them explicitly
+if (!headers_sent()) {
+    $headers = headers_list();
+    header_remove();
+    foreach ($headers as $header) {
+        header($header);
+    }
+}
+
+echo $content;
 
 function get_mime_type(string $file): string
 {
@@ -48,6 +62,7 @@ function get_mime_type(string $file): string
         'js'    => 'application/javascript',
         'json'  => 'application/json',
         'xml'   => 'application/xml',
+        'yaml', 'yml' => 'application/yaml',
         'html'  => 'text/html',
         'txt'   => 'text/plain',
         'png'   => 'image/png',
