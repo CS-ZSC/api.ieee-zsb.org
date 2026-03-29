@@ -122,7 +122,8 @@
 <script src="https://unpkg.com/swagger-ui-dist@5.32.0/swagger-ui-bundle.js"></script>
 <script src="https://unpkg.com/swagger-ui-dist@5.32.0/swagger-ui-standalone-preset.js"></script>
 <script>
-    window.onload = function() {
+    // Wait for CDN scripts to load before initializing
+    function initSwaggerUI() {
         const urls = [];
 
         @foreach($urlsToDocs as $title => $url)
@@ -168,6 +169,13 @@
             usePkceWithAuthorizationCodeGrant: "{!! (bool)config('l5-swagger.defaults.ui.authorization.oauth2.use_pkce_with_authorization_code_grant') !!}"
         })
         @endif
+    }
+
+    // Initialize when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initSwaggerUI);
+    } else {
+        initSwaggerUI();
     }
 </script>
 </body>
