@@ -8,6 +8,10 @@
     ],
     "routes": [
         {
+            "src": "/docs/asset/(.*)",
+            "dest": "/server.php"
+        },
+        {
             "src": "/api/(.*)",
             "dest": "/server.php",
             "headers": {

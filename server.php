@@ -12,6 +12,18 @@ if ($uri !== '/' && file_exists($file = __DIR__.'/public'.$uri)) {
     return;
 }
 
+// Serve Swagger assets from vendor directory
+if (str_starts_with($uri, '/docs/asset/')) {
+    $assetPath = __DIR__.'/vendor/swagger-api/swagger-ui/dist/'.substr($uri, 13);
+    if (file_exists($assetPath)) {
+        $mime = get_mime_type($assetPath);
+        header('Content-Type: '.$mime);
+        header('Cache-Control: public, max-age=31536000');
+        readfile($assetPath);
+        return;
+    }
+}
+
 // Set proper headers for API requests (except documentation)
 if (str_starts_with($uri, '/api/') && !str_ends_with($uri, '/api/documentation')) {
     header('Content-Type: application/json');
