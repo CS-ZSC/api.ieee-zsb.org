@@ -6,23 +6,6 @@
             "use": "vercel-php@0.7.2"
         }
     ],
-    "routes": [
-        {
-            "src": "/docs/asset/(.*)",
-            "dest": "/server.php"
-        },
-        {
-            "src": "/api/(.*)",
-            "dest": "/server.php",
-            "headers": {
-                "Cache-Control": "no-cache, no-store, must-revalidate"
-            }
-        },
-        {
-            "src": "/(.*)",
-            "dest": "/server.php"
-        }
-    ],
     "env": {
         "APP_ENV": "production",
         "APP_DEBUG": "false",
