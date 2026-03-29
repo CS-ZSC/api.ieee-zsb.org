@@ -44,9 +44,7 @@ return [
                  * Absolute paths to directory containing the swagger annotations are stored.
                  * EMPTY = No scanning, use manual YAML file only
                  */
-                'annotations' => [
-                    // Empty - we use manual YAML file, no code scanning
-                ],
+                'annotations' => [],
             ],
         ],
     ],
