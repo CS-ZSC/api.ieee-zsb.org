@@ -12,6 +12,28 @@ if ($uri !== '/' && file_exists($file = __DIR__.'/public'.$uri)) {
     return;
 }
 
+// For API requests (except documentation), capture and modify output
+if (str_starts_with($uri, '/api/') && !str_ends_with($uri, '/api/documentation')) {
+    // Test header to verify our code runs
+    header('X-Server-Handler: active');
+
+    // Set headers before Laravel
+    header('Content-Type: application/json');
+    header('Access-Control-Allow-Origin: *');
+    header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+    header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
+
+    // Capture Laravel output
+    ob_start();
+    require_once __DIR__.'/public/index.php';
+    $content = ob_get_clean();
+
+    // Ensure JSON content type
+    header('Content-Type: application/json');
+    echo $content;
+    return;
+}
+
 // Forward everything else to Laravel
 require_once __DIR__.'/public/index.php';
 

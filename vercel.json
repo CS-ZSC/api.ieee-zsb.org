@@ -8,6 +8,22 @@
     ],
     "routes": [
         {
+            "src": "/api/site/(.*)",
+            "dest": "/server.php",
+            "headers": {
+                "Cache-Control": "no-cache, no-store, must-revalidate",
+                "Content-Type": "application/json"
+            }
+        },
+        {
+            "src": "/api/(.*)",
+            "dest": "/server.php",
+            "headers": {
+                "Cache-Control": "no-cache, no-store, must-revalidate",
+                "Content-Type": "application/json"
+            }
+        },
+        {
             "src": "/(.*)",
             "dest": "/server.php"
         }
