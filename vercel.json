@@ -32,6 +32,8 @@
         "APP_URL": "https://api-ieee-zsb-org-zs9o.vercel.app",
         "ASSET_URL": "https://api-ieee-zsb-org-zs9o.vercel.app/",
         "L5_SWAGGER_USE_ABSOLUTE_PATH": "false",
+        "L5_SWAGGER_USE_CDN": "true",
+        "L5_SWAGGER_CDN_URL": "https://unpkg.com/swagger-ui-dist@5.32.0/",
         "APP_CONFIG_CACHE": "/tmp/config.php",
         "APP_EVENTS_CACHE": "/tmp/events.php",
         "APP_PACKAGES_CACHE": "/tmp/packages.php",

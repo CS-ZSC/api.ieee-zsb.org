@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <title>{{ $documentationTitle }}</title>
     <link rel="stylesheet" type="text/css" href="https://unpkg.com/swagger-ui-dist@5.32.0/swagger-ui.css">
-    <link rel="icon" type="image/png" href="https://unpkg.com/swagger-ui-dist@5.32.0/favicon-32x32.png" sizes="32x32"/>
-    <link rel="icon" type="image/png" href="https://unpkg.com/swagger-ui-dist@5.32.0/favicon-16x16.png" sizes="16x16"/>
+<link rel="icon" type="image/png" href="https://unpkg.com/swagger-ui-dist@5.32.0/favicon-32x32.png" sizes="32x32"/>
+<link rel="icon" type="image/png" href="https://unpkg.com/swagger-ui-dist@5.32.0/favicon-16x16.png" sizes="16x16"/>
     <style>
     html
     {
