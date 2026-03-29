@@ -6,6 +6,12 @@
             "use": "vercel-php@0.7.2"
         }
     ],
+    "routes": [
+        {
+            "src": "/(.*)",
+            "dest": "/server.php"
+        }
+    ],
     "env": {
         "APP_ENV": "production",
         "APP_DEBUG": "false",
