@@ -11,16 +11,14 @@
             "src": "/api/site/(.*)",
             "dest": "/server.php",
             "headers": {
-                "Cache-Control": "no-cache, no-store, must-revalidate",
-                "Content-Type": "application/json"
+                "Cache-Control": "no-cache, no-store, must-revalidate"
             }
         },
         {
             "src": "/api/(.*)",
             "dest": "/server.php",
             "headers": {
-                "Cache-Control": "no-cache, no-store, must-revalidate",
-                "Content-Type": "application/json"
+                "Cache-Control": "no-cache, no-store, must-revalidate"
             }
         },
         {
